@@ -75,9 +75,7 @@
         return false;
     
     // Stop current playback
-    // TODO: Ggf. Fall 718 abfangen
-//    if (![[_services objectForKey:@"AVTService"] stop:@"0"])
-//        return false;
+    [[_services objectForKey:@"AVTService"] stop:@"0"];
     
     // Create DIDL metadata
     NSString *meta = [DIDLMetadata metadataWithFile:filePath address:address];
