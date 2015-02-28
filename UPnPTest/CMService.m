@@ -8,6 +8,8 @@
 
 #import "CMService.h"
 #import "XMLDictionary.h"
+#import "DDLog.h"
+#import "GlobalLogging.h"
 
 @implementation CMService
 
@@ -38,7 +40,7 @@
     NSString *connIDStr = [[[dict objectForKey:@"s:Body"] objectForKey:@"u:GetCurrentConnectionIDsResponse"] objectForKey:@"ConnectionIDs"];
     NSArray *connIDs = [connIDStr componentsSeparatedByString:@","];
     
-    NSLog(@"%@", connIDs);
+    DDLogInfo(@"%@", connIDs);
     
 //    for (NSString *connID in connIDs)
 //        NSLog(@"%@", [self getConnectionInfo:connID]);

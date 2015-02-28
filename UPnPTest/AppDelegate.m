@@ -18,8 +18,8 @@
 #import "DDTTYLogger.h"
 #import "DragView.h"
 
-// Log levels: off, error, warn, info, verbose
-static const int ddLogLevel = LOG_LEVEL_VERBOSE;
+#import "DDLog.h"
+#import "GlobalLogging.h"
 
 @interface AppDelegate ()
 
@@ -49,6 +49,9 @@ static const int ddLogLevel = LOG_LEVEL_VERBOSE;
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
 {
+    // Setup logger
+    [DDLog addLogger:[DDTTYLogger sharedInstance]];
+    
     // Init variables
     _upnpDevices = [[NSMutableDictionary alloc] init];
     _udnList = [[NSMutableArray alloc] init];
@@ -59,7 +62,6 @@ static const int ddLogLevel = LOG_LEVEL_VERBOSE;
     [ssdp ssdpMSEARCHRequest];
     
     // Start HTTP server
-    [DDLog addLogger:[DDTTYLogger sharedInstance]];
     _server = [[HTTPServer alloc] init];
     
     NSError *error = nil;
@@ -80,7 +82,7 @@ static const int ddLogLevel = LOG_LEVEL_VERBOSE;
         }
     }
     if ([addrString isEqualToString:@""]) {
-        NSLog(@"Error: IP address not available!");
+        DDLogError(@"Error: IP address not available!");
         return;
     }
     
@@ -89,10 +91,6 @@ static const int ddLogLevel = LOG_LEVEL_VERBOSE;
 
 - (void)applicationWillTerminate:(NSNotification *)aNotification
 {
-//    for (NSString *UDN in _upnpDevices)
-//        [(UPNPDevice *)[_upnpDevices objectForKey:UDN] printInfo];
-    
-    
     // Stop playback
     if (_lastDevice)
         [(AVTService *)[[_lastDevice services] objectForKey:@"AVTService"] stop:@"0"];
@@ -103,7 +101,7 @@ static const int ddLogLevel = LOG_LEVEL_VERBOSE;
 
 -(void)gotSSDPResponseWithLocation:(NSString *)location UDN:(NSString *)UDN
 {
-//    NSLog(@"Response: %@", location);
+    DDLogInfo(@"Response: %@", location);
     
     // Check if device is already known
     UPNPDevice *device = [_upnpDevices objectForKey:UDN];
@@ -120,11 +118,10 @@ static const int ddLogLevel = LOG_LEVEL_VERBOSE;
                                               timeoutInterval:0.5];
         NSHTTPURLResponse *urlResponse;
         NSData *dat = [NSURLConnection sendSynchronousRequest:urlRequest returningResponse:&urlResponse error:nil];
-//        NSLog(@"%@, Code %d", location, (int)[urlResponse statusCode]);
         if ([urlResponse statusCode] != 200)    // Check availability
             return;
 
-//        NSLog(@"%@", [[NSString alloc] initWithData:dat encoding:NSUTF8StringEncoding]);
+        DDLogVerbose(@"Device description: %@", [[NSString alloc] initWithData:dat encoding:NSUTF8StringEncoding]);
         XMLDictionaryParser *XMLParser = [XMLDictionaryParser sharedInstance];
         NSDictionary *dict = [XMLParser dictionaryWithData:dat];
         
@@ -134,7 +131,7 @@ static const int ddLogLevel = LOG_LEVEL_VERBOSE;
         // Get host address from location string
         NSString *host = [[[location stringByReplacingOccurrencesOfString:@"http://" withString:@""] componentsSeparatedByString:@"/"] objectAtIndex:0];
         host = [NSString stringWithFormat:@"http://%@/",host];
-//        NSLog(@"Host: %@", host);
+        DDLogInfo(@"Host: %@", host);
         
         // Get supported services
         NSArray *services = [[[dict objectForKey:@"device"] objectForKey:@"serviceList"] objectForKey:@"service"];
@@ -167,12 +164,13 @@ static const int ddLogLevel = LOG_LEVEL_VERBOSE;
             return;
         }
         else
-            NSLog(@"Found valid device: %@ at %@", [device friendlyName], host);
+            DDLogInfo(@"Found valid device: %@ at %@", [device friendlyName], host);
         
         
         // Get protocol info
         [device updateProtocolInfo];
-//        [device printInfoVerbose];
+        if (ddLogLevel >= LOG_LEVEL_VERBOSE)
+            [device printInfoVerbose];
         
         // Add device to dictionary
         [_upnpDevices setObject:device forKey:UDN];

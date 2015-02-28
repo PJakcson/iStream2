@@ -11,6 +11,8 @@
 #import "CMService.h"
 #import "AVTService.h"
 #import "DIDLMetadata.h"
+#import "DDLog.h"
+#import "GlobalLogging.h"
 
 
 @implementation UPNPDevice
@@ -28,10 +30,10 @@
 
 -(void)printInfo
 {
-    NSLog(@"Name: %@", _friendlyName);
-    NSLog(@"Location: %@", _location);
-    NSLog(@"Valid: %@", _validDevice ? @"Yes" : @"No");
-    NSLog(@"Services: %@", _services);
+    DDLogInfo(@"Name: %@", _friendlyName);
+    DDLogInfo(@"Location: %@", _location);
+    DDLogInfo(@"Valid: %@", _validDevice ? @"Yes" : @"No");
+    DDLogInfo(@"Services: %@", _services);
 }
 
 -(void)addService:(UPNPService *)service
@@ -43,7 +45,7 @@
 -(void)updateProtocolInfo
 {
     _protocols = [[_services objectForKey:@"CMService"] getProtocolInfo];
-//    NSLog(@"%@", _protocols);
+    DDLogVerbose(@"Protocols: %@", _protocols);
 }
 
 -(bool)checkValidity
@@ -94,17 +96,17 @@
 
 -(void)printInfoVerbose
 {
-    NSLog(@"Name: %@", _friendlyName);
-    NSLog(@"Location: %@", _location);
-    NSLog(@"Valid: %@", _validDevice ? @"Yes" : @"No");
-    NSLog(@"Services: %@", _services);
-    NSLog(@"Protocols: %@", _protocols);
-    NSLog(@"%@, ", [[_services objectForKey:@"CMService"] getConnectionIDs]);
-    NSLog(@"%@, ", [[_services objectForKey:@"AVTService"] getMediaInfo:@"0"]);
-    NSLog(@"%@, ", [[_services objectForKey:@"AVTService"] getTransportInfo:@"0"]);
-    NSLog(@"%@, ", [[_services objectForKey:@"AVTService"] getTransportSettings:@"0"]);
-    NSLog(@"%@, ", [[_services objectForKey:@"AVTService"] getDeviceCapabilities:@"0"]);
-    NSLog(@"%@, ", [[_services objectForKey:@"AVTService"] getPositionInfo:@"0"]);
+    DDLogVerbose(@"Name: %@", _friendlyName);
+    DDLogVerbose(@"Location: %@", _location);
+    DDLogVerbose(@"Valid: %@", _validDevice ? @"Yes" : @"No");
+    DDLogVerbose(@"Services: %@", _services);
+    DDLogVerbose(@"Protocols: %@", _protocols);
+    DDLogVerbose(@"%@, ", [[_services objectForKey:@"CMService"] getConnectionIDs]);
+    DDLogVerbose(@"%@, ", [[_services objectForKey:@"AVTService"] getMediaInfo:@"0"]);
+    DDLogVerbose(@"%@, ", [[_services objectForKey:@"AVTService"] getTransportInfo:@"0"]);
+    DDLogVerbose(@"%@, ", [[_services objectForKey:@"AVTService"] getTransportSettings:@"0"]);
+    DDLogVerbose(@"%@, ", [[_services objectForKey:@"AVTService"] getDeviceCapabilities:@"0"]);
+    DDLogVerbose(@"%@, ", [[_services objectForKey:@"AVTService"] getPositionInfo:@"0"]);
 }
 
 @end

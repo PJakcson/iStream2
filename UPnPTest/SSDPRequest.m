@@ -8,6 +8,8 @@
 
 #import "SSDPRequest.h"
 #import "GCDAsyncUdpSocket.h"
+#import "DDLog.h"
+#import "GlobalLogging.h"
 
 @interface SSDPRequest ()
 
@@ -35,22 +37,22 @@
     if (_tim)
         [_tim invalidate];
     
-    NSLog(@"Searching...");
+    DDLogInfo(@"Searching...");
     NSString *ssdpMSEARCHString = @"M-SEARCH * HTTP/1.1\r\nHOST: 239.255.255.250:1900\r\nMAN: \"ssdp:discover\"\r\nMX: 3\r\nST: upnp:rootdevice\r\n\r\n";
     self.ssdpSock = [[GCDAsyncUdpSocket alloc] initWithDelegate:self delegateQueue:ssdpQueue];
     
     NSError *socketError = nil;
     
     if (![_ssdpSock bindToPort:0 error:&socketError]) {
-        NSLog(@"Failed binding socket: %@", [socketError localizedDescription]);
+        DDLogError(@"Failed binding socket: %@", [socketError localizedDescription]);
     }
     
     if(![_ssdpSock joinMulticastGroup:@"239.255.255.250" error:&socketError]){
-        NSLog(@"Failed joining multicast group: %@", [socketError localizedDescription]);
+        DDLogError(@"Failed joining multicast group: %@", [socketError localizedDescription]);
     }
     
     if (![_ssdpSock enableBroadcast:TRUE error:&socketError]){
-        NSLog(@"Failed enabling broadcast: %@", [socketError localizedDescription]);
+        DDLogError(@"Failed enabling broadcast: %@", [socketError localizedDescription]);
     }
     
     [_ssdpSock sendData:[ssdpMSEARCHString dataUsingEncoding:NSUTF8StringEncoding]
@@ -70,7 +72,7 @@
 
 - (void)completeSearch:(NSTimer *)t
 {
-    NSLog(@"Timeout, closing ssdp socket...");
+    DDLogInfo(@"Timeout, closing ssdp socket...");
     [self.ssdpSock close];
     self.ssdpSock = nil;
     
@@ -89,7 +91,7 @@ withFilterContext:(id)filterContext
     NSString *rxData = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
     NSArray *headers = [rxData componentsSeparatedByString:@"\n"];
     NSString *location, *UDN;
-//    NSLog(@"%@", rxData);
+    DDLogVerbose(@"%@", rxData);
     
     // Parse SSDP response
     for (NSString *header in headers)

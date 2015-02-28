@@ -8,6 +8,8 @@
 
 #import "DragView.h"
 #import "AppDelegate.h"
+#import "DDLog.h"
+#import "GlobalLogging.h"
 
 @implementation DragView
 
@@ -40,7 +42,6 @@
 
 -(NSDragOperation) draggingUpdated:(id<NSDraggingInfo>)sender
 {
-//    NSLog(@"draggingUpdated");
     return NSDragOperationEvery;
 }
 
@@ -53,7 +54,7 @@
     NSPasteboard *pboard = [sender draggingPasteboard];
     NSArray *files = [pboard propertyListForType:NSFilenamesPboardType];
     
-    NSLog(@"%@", [files objectAtIndex:0]);
+    DDLogInfo(@"%@", [files objectAtIndex:0]);
     
     [(AppDelegate *)[[NSApplication sharedApplication] delegate] playFile:[files objectAtIndex:0]];
 
