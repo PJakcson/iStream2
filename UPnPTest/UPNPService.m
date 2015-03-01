@@ -24,9 +24,22 @@
 {
     NSUInteger len=0;
     NSInteger ret = 0;
-    // TODO: Workaround for full control URLs
+
     NSString *hostStr = [NSString stringWithFormat:@"%@%@",_host,_controlURL];
     NSURL *hostURL = [NSURL URLWithString:hostStr];
+    if (!hostURL)
+    {
+        // Control URL could be a full URL
+        hostStr = [NSString stringWithFormat:@"%@",_controlURL];
+        hostURL = [NSURL URLWithString:hostStr];
+        
+        // Stop if that doesn't work either
+        if(!hostURL)
+        {
+            DDLogError(@"Error: Control URL is invalid!");
+            return 500;
+        }
+    }
     
     // Generate SOAP message
     NSMutableString *body = [[NSMutableString alloc] init];
@@ -103,6 +116,19 @@
     NSString *respURL = [NSString stringWithFormat:@"<http://%@:%d>", addrString, [_socket localPort]];
     NSString *hostStr = [NSString stringWithFormat:@"%@%@",_host,_eventURL];
     NSURL *hostURL = [NSURL URLWithString:hostStr];
+    if (!hostURL)
+    {
+        // Control URL could be a full URL
+        hostStr = [NSString stringWithFormat:@"%@",_eventURL];
+        hostURL = [NSURL URLWithString:hostStr];
+        
+        // Stop if that doesn't work either
+        if(!hostURL)
+        {
+            DDLogError(@"Error: Event URL is invalid!");
+            return 500;
+        }
+    }
     DDLogInfo(@"Subscribing: %@", hostURL);
     
     // Build subscriotion HTTP request
