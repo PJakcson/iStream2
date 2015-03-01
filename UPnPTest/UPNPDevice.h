@@ -12,6 +12,7 @@
 
 @interface UPNPDevice : NSObject
 
+@property (nonatomic, strong) NSString *UDN;
 @property (nonatomic, strong) NSString *location;
 @property (nonatomic, strong) NSString *friendlyName;
 @property (nonatomic, strong) NSMutableDictionary *services;

@@ -8,6 +8,9 @@
 
 #import <Foundation/Foundation.h>
 
+#define HTTP_REQUEST_HEADER                10
+#define HTTP_REQUEST_BODY                  11
+
 @interface UPNPService : NSObject
 
 @property (nonatomic,strong) NSString *upnpNameSpace;
@@ -16,6 +19,6 @@
 @property (nonatomic,strong) NSString *host;
 
 -(NSInteger)action:(NSString*)soapAction parameters:(NSDictionary*)parameters returnValues:(NSData**)output;
-
+-(bool)subscribe;
 
 @end

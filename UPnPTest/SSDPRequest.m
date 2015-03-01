@@ -8,13 +8,12 @@
 
 #import "SSDPRequest.h"
 #import "GCDAsyncUdpSocket.h"
-#import "DDLog.h"
 #import "GlobalLogging.h"
 
 @interface SSDPRequest ()
 
 @property (weak) id<SSDPRequestProtocol> delegate;
-@property (nonatomic,strong) GCDAsyncUdpSocket *ssdpSock;
+@property (nonatomic,strong) GCDAsyncUdpSocket *ssdpSock, *listenSock;
 @property (nonatomic,strong) NSTimer *tim;
 
 @end
@@ -27,7 +26,22 @@
     if (self)
     {
         _delegate = delegate;
-        ssdpQueue = dispatch_queue_create("SSDQQueue", NULL);
+        ssdpQueue = dispatch_queue_create("SSDPQueue", NULL);
+        
+        // Setup listener socket
+        _listenSock = [[GCDAsyncUdpSocket alloc] initWithDelegate:self delegateQueue:ssdpQueue];
+        
+        NSError *socketError = nil;
+
+        if (![_listenSock bindToPort:1900 error:&socketError]) {
+            DDLogError(@"Failed binding socket: %@", [socketError localizedDescription]);
+        }
+        
+        if(![_listenSock joinMulticastGroup:@"239.255.255.250" error:&socketError]){
+            DDLogError(@"Failed joining multicast group: %@", [socketError localizedDescription]);
+        }
+
+        [_listenSock beginReceiving:nil];
     }
     return self;
 }
@@ -39,7 +53,7 @@
     
     DDLogInfo(@"Searching...");
     NSString *ssdpMSEARCHString = @"M-SEARCH * HTTP/1.1\r\nHOST: 239.255.255.250:1900\r\nMAN: \"ssdp:discover\"\r\nMX: 3\r\nST: upnp:rootdevice\r\n\r\n";
-    self.ssdpSock = [[GCDAsyncUdpSocket alloc] initWithDelegate:self delegateQueue:ssdpQueue];
+    _ssdpSock = [[GCDAsyncUdpSocket alloc] initWithDelegate:self delegateQueue:ssdpQueue];
     
     NSError *socketError = nil;
     
@@ -51,9 +65,9 @@
         DDLogError(@"Failed joining multicast group: %@", [socketError localizedDescription]);
     }
     
-    if (![_ssdpSock enableBroadcast:TRUE error:&socketError]){
-        DDLogError(@"Failed enabling broadcast: %@", [socketError localizedDescription]);
-    }
+//    if (![_ssdpSock enableBroadcast:TRUE error:&socketError]){
+//        DDLogError(@"Failed enabling broadcast: %@", [socketError localizedDescription]);
+//    }
     
     [_ssdpSock sendData:[ssdpMSEARCHString dataUsingEncoding:NSUTF8StringEncoding]
                  toHost:@"239.255.255.250"
@@ -90,7 +104,7 @@ withFilterContext:(id)filterContext
 {
     NSString *rxData = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
     NSArray *headers = [rxData componentsSeparatedByString:@"\n"];
-    NSString *location, *UDN;
+    NSString *location, *UDN, *NTS;
     DDLogVerbose(@"%@", rxData);
     
     // Parse SSDP response
@@ -101,11 +115,19 @@ withFilterContext:(id)filterContext
             location = [[headerComponents objectAtIndex:1] stringByReplacingOccurrencesOfString:@"\r" withString:@""];
         else if ([[headerComponents firstObject] caseInsensitiveCompare:@"USN:"] == NSOrderedSame)
             UDN = [[[headerComponents objectAtIndex:1] componentsSeparatedByString:@"::"] objectAtIndex:0];
+        else if ([[headerComponents firstObject] caseInsensitiveCompare:@"NTS:"] == NSOrderedSame)
+            NTS = [[headerComponents objectAtIndex:1]  stringByReplacingOccurrencesOfString:@"\r" withString:@""];
     }
-
+    
     // Hand response over to delegate
     if (location != nil && UDN != nil)
         [_delegate gotSSDPResponseWithLocation:location UDN:UDN];
+    
+    if (NTS != nil)
+    {
+        if ([NTS isEqualToString:@"ssdp:byebye"])
+            [_delegate removeDevice:UDN];
+    }
 }
 
 @end

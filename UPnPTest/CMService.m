@@ -8,7 +8,6 @@
 
 #import "CMService.h"
 #import "XMLDictionary.h"
-#import "DDLog.h"
 #import "GlobalLogging.h"
 
 @implementation CMService

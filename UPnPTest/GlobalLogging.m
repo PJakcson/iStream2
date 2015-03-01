@@ -1,3 +1,3 @@
 #import "DDLog.h"
 
-int ddLogLevel = LOG_LEVEL_ERROR;
+int ddLogLevel = LOG_LEVEL_INFO;

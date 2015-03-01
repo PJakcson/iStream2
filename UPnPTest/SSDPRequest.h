@@ -22,6 +22,7 @@
 @protocol SSDPRequestProtocol <NSObject>
 
 -(void)gotSSDPResponseWithLocation:(NSString *)location UDN:(NSString *)UDN;
+-(void)removeDevice:(NSString *)UDN;
 -(NSArray *)udnList;
 
 @end

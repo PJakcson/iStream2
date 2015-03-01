@@ -14,11 +14,9 @@
 #import "AVTService.h"
 #import "DIDLMetadata.h"
 #import "HTTPServer.h"
-#import "DDLog.h"
 #import "DDTTYLogger.h"
 #import "DragView.h"
 
-#import "DDLog.h"
 #import "GlobalLogging.h"
 
 @interface AppDelegate ()
@@ -109,6 +107,7 @@
     {
         // Create new device
         device = [[UPNPDevice alloc] init];
+        [device setUDN:UDN];
         [device setLocation:location];
 
         // Get device description file and parse it
@@ -144,7 +143,7 @@
                 CMService *upnpservice = [[CMService alloc] init];
                 [upnpservice setUpnpNameSpace:[service objectForKey:@"serviceType"]];
                 [upnpservice setControlURL:[service objectForKey:@"controlURL"]];
-                [upnpservice setEventURL:[service objectForKey:@"eventURL"]];
+                [upnpservice setEventURL:[service objectForKey:@"eventSubURL"]];
                 [upnpservice setHost:host];
                 [device addService:upnpservice];
             }
@@ -152,7 +151,7 @@
                 AVTService *upnpservice = [[AVTService alloc] init];
                 [upnpservice setUpnpNameSpace:[service objectForKey:@"serviceType"]];
                 [upnpservice setControlURL:[service objectForKey:@"controlURL"]];
-                [upnpservice setEventURL:[service objectForKey:@"eventURL"]];
+                [upnpservice setEventURL:[service objectForKey:@"eventSubURL"]];
                 [upnpservice setHost:host];
                 [device addService:upnpservice];
             }
@@ -161,10 +160,14 @@
         // Check if required services are available
         if (![device checkValidity]){
             [_upnpDevices setObject:device forKey:UDN]; // Add device so we don't query it again
+            DDLogInfo(@"Found invalid device: %@ at %@", [device friendlyName], host);
             return;
         }
         else
             DDLogInfo(@"Found valid device: %@ at %@", [device friendlyName], host);
+        
+        // Subscribe to event
+//        [[[device services] objectForKey:@"AVTService"] subscribe];
         
         
         // Get protocol info
@@ -187,6 +190,51 @@
             [_devList addItemWithTitle:[device friendlyName]];
             [[_devList lastItem] setTag:[_udnList count]-1];
         });
+    }
+}
+
+-(void)removeDevice:(NSString *)UDN
+{
+    // Check if device was known
+    NSUInteger idx = [_udnList indexOfObject:UDN];
+    if (idx != NSNotFound)
+    {
+        // Remove device from dictionary / array
+        [_udnList removeObjectAtIndex:idx];
+        [_upnpDevices removeObjectForKey:UDN];
+        DDLogInfo(@"Removed device: %@", UDN);
+        
+        // Remove device from UI (on main thread)
+        dispatch_sync(dispatch_get_main_queue(), ^{
+            [_devList removeItemAtIndex:idx];
+            
+            // Fix tags of remaining devices
+            NSInteger count = [_devList numberOfItems];
+            for (NSUInteger i=idx; i<count;i++)
+            {
+                [[_devList itemAtIndex:i] setTag:i-1];
+            }
+        });
+        
+        // Set _lastDevice to nil if it was just removed
+        if (_lastDevice)
+        {
+            if ([[_lastDevice UDN] isEqualToString:UDN]) {
+                _lastDevice = nil;
+                _state = nil;
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    NSString *path = [[NSBundle mainBundle] pathForResource:@"tv-100" ofType:@"png"];
+                    NSImage *img = [[NSImage alloc] initWithContentsOfFile:path];
+                    [_dragView setImage:img];
+                    [_toggleDrawer setEnabled:false];
+                    [_slider setEnabled:false];
+                    [_slider setDoubleValue:0.0];
+                    [_posLabel setStringValue:@"0:00:00"];
+                    [_durLabel setStringValue:@"0:00:00"];
+                    _lastDevice = nil;
+                });
+            }
+        }
     }
 }
 

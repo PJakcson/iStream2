@@ -8,7 +8,6 @@
 
 #import "DragView.h"
 #import "AppDelegate.h"
-#import "DDLog.h"
 #import "GlobalLogging.h"
 
 @implementation DragView
