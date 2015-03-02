@@ -223,8 +223,7 @@
                 _lastDevice = nil;
                 _state = nil;
                 dispatch_async(dispatch_get_main_queue(), ^{
-                    NSString *path = [[NSBundle mainBundle] pathForResource:@"tv-100" ofType:@"png"];
-                    NSImage *img = [[NSImage alloc] initWithContentsOfFile:path];
+                    NSImage *img = [NSImage imageNamed:@"tv"];
                     [_dragView setImage:img];
                     [_toggleDrawer setEnabled:false];
                     [_slider setEnabled:false];
@@ -261,8 +260,7 @@
         dispatch_sync(dispatch_get_main_queue(), ^{
             [_wheel stopAnimation:nil];
             if (result) {
-                NSString *path = [[NSBundle mainBundle] pathForResource:@"tv_show-100" ofType:@"png"];
-                NSImage *img = [[NSImage alloc] initWithContentsOfFile:path];
+                NSImage *img = [NSImage imageNamed:@"tv_play"];
                 [_dragView setImage:img];
                 
                 // Start timer
@@ -273,8 +271,7 @@
                                                        repeats:true];
             }
             else {
-                NSString *path = [[NSBundle mainBundle] pathForResource:@"tv_error-256" ofType:@"png"];
-                NSImage *img = [[NSImage alloc] initWithContentsOfFile:path];
+                NSImage *img = [NSImage imageNamed:@"tv_err"];
                 [img setSize:NSMakeSize(100, 100)];
                 [_dragView setImage:img];
                 [_lastDevice printInfoVerbose];
@@ -300,8 +297,7 @@
             transportInfo = [avt getTransportInfo:@"0"];
             if (!positionInfo || !transportInfo) {
                 dispatch_async(dispatch_get_main_queue(), ^{
-                    NSString *path = [[NSBundle mainBundle] pathForResource:@"tv-100" ofType:@"png"];
-                    NSImage *img = [[NSImage alloc] initWithContentsOfFile:path];
+                    NSImage *img = [NSImage imageNamed:@"tv"];
                     [_dragView setImage:img];
                     [_toggleDrawer setEnabled:false];
                     [_slider setEnabled:false];
@@ -324,8 +320,7 @@
             if (![_state isEqualToString:oldstate]) {
                 // Case transitioning
                 if ([_state isEqualToString:@"STOPPED"]) {
-                    NSString *path = [[NSBundle mainBundle] pathForResource:@"tv-100" ofType:@"png"];
-                    NSImage *img = [[NSImage alloc] initWithContentsOfFile:path];
+                    NSImage *img = [NSImage imageNamed:@"tv"];
                     [_dragView setImage:img];
                     [_toggleDrawer setEnabled:false];
                     [_slider setEnabled:false];
@@ -334,14 +329,12 @@
                     [_durLabel setStringValue:@"0:00:00"];
                     _lastDevice = nil;
                 } else if ([_state isEqualToString:@"PLAYING"]) {
-                    NSString *path = [[NSBundle mainBundle] pathForResource:@"tv_show-100" ofType:@"png"];
-                    NSImage *img = [[NSImage alloc] initWithContentsOfFile:path];
+                    NSImage *img = [NSImage imageNamed:@"tv_play"];
                     [_dragView setImage:img];
                     [_toggleDrawer setEnabled:true];
                     [_slider setEnabled:true];
                 } else if ([_state isEqualToString:@"PAUSED_PLAYBACK"]) {
-                    NSString *path = [[NSBundle mainBundle] pathForResource:@"tv_pause-100" ofType:@"png"];
-                    NSImage *img = [[NSImage alloc] initWithContentsOfFile:path];
+                    NSImage *img = [NSImage imageNamed:@"tv_pause"];
                     [_dragView setImage:img];
                 }
             }

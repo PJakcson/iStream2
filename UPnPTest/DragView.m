@@ -17,15 +17,13 @@
     [self registerForDraggedTypes:[NSArray arrayWithObjects:
                                    NSColorPboardType, NSFilenamesPboardType, nil]];
     
-    NSString *path = [[NSBundle mainBundle] pathForResource:@"tv-100_gray" ofType:@"png"];
-    NSImage *img = [[NSImage alloc] initWithContentsOfFile:path];
+    NSImage *img = [NSImage imageNamed:@"tv_gray"];
     [self setImage:img];
 }
 
 -(NSDragOperation)draggingEntered:(id<NSDraggingInfo>)sender
 {
-    NSString *path = [[NSBundle mainBundle] pathForResource:@"tv-100" ofType:@"png"];
-    NSImage *img = [[NSImage alloc] initWithContentsOfFile:path];
+    NSImage *img = [NSImage imageNamed:@"tv"];
     [self setImage:img];
     
     return NSDragOperationEvery;
@@ -33,8 +31,7 @@
 
 - (void)draggingExited:(id<NSDraggingInfo>)sender
 {
-    NSString *path = [[NSBundle mainBundle] pathForResource:@"tv-100_gray" ofType:@"png"];
-    NSImage *img = [[NSImage alloc] initWithContentsOfFile:path];
+    NSImage *img = [NSImage imageNamed:@"tv_gray"];
     [self setImage:img];
 }
 
