@@ -12,6 +12,7 @@
 
 +(NSString *)metadataWithURI:(NSString *)URI title:(NSString *)title protocol:(NSString *)protocol size:(NSString *)size class:(NSString *)upnpclass;
 +(NSString *)metadataWithFile:(NSString *)filepath address:(NSString *)address;
++(NSString *)getMIMEType:(NSString *)filepath;
 
 @end
 

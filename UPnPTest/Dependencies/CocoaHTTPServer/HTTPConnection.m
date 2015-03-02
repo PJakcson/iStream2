@@ -11,6 +11,7 @@
 #import "HTTPAsyncFileResponse.h"
 #import "WebSocket.h"
 #import "HTTPLogging.h"
+#import "DIDLMetadata.h"
 
 #if ! __has_feature(objc_arc)
 #warning This file must be compiled with ARC. Use -fobjc-arc flag (or convert project to ARC).
@@ -1668,9 +1669,6 @@ static NSMutableArray *recentNonces;
 {
     HTTPLogTrace();
     
-    //    NSString *filePath = [self filePathForURI:path allowDirectory:NO];
-//    NSString *filePath = @"/Users/Flo/Desktop/Download/Guardians of the Galaxies.mkv";
-    
     BOOL isDir = NO;
     
     if (filePath && [[NSFileManager defaultManager] fileExistsAtPath:filePath isDirectory:&isDir] && !isDir)
@@ -1929,6 +1927,14 @@ static NSMutableArray *recentNonces;
 	
 	// Add server capability headers
 	[response setHeaderField:@"Accept-Ranges" value:@"bytes"];
+    
+    // EDIT
+    
+    [response setHeaderField:@"Content-Type" value:[DIDLMetadata getMIMEType:filePath]];
+    [response setHeaderField:@"contentFeatures.dlna.org" value:@"DLNA.ORG_PN=MPEG_PS_PAL;DLNA.ORG_OP=01;DLNA.ORG_CI=0;DLNA.ORG_FLAGS=01700000000000000000000000000000"];
+    [response setHeaderField:@"transferMode.dlna.org" value:@"Streaming"];
+    
+    // EDIT END
 	
 	// Add optional response headers
 	if ([httpResponse respondsToSelector:@selector(httpHeaders)])
