@@ -57,7 +57,7 @@
     
     [(AppDelegate *)[[NSApplication sharedApplication] delegate] playFile:[files objectAtIndex:0]];
 
-    return true;
+    return false;
 }
 
 @end
