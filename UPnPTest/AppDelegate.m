@@ -29,6 +29,8 @@
 @property (weak) IBOutlet NSTextField *posLabel;
 @property (weak) IBOutlet NSSlider *slider;
 @property (weak) IBOutlet NSButton *toggleDrawer;
+@property (weak) IBOutlet NSDrawer *queueDrawer;
+@property (weak) IBOutlet NSTableView *queueTable;
 
 @property (nonatomic, strong) HTTPServer *server;
 @property (nonatomic, strong) NSString *serverAddress;
@@ -37,6 +39,9 @@
 @property (nonatomic, strong) NSString *state;
 @property (nonatomic, strong) NSString *pos;
 @property (nonatomic, strong) NSString *dur;
+
+@property (nonatomic, strong) NSMutableArray *fileNames;
+@property (nonatomic, strong) NSMutableArray *filePaths;
 
 @property (atomic, strong) NSDictionary *positionInfo;
 @property (atomic, strong) NSDictionary *transportInfo;
@@ -55,6 +60,10 @@
     _udnList = [[NSMutableArray alloc] init];
     [_wheel startAnimation:nil];
     ssdp = [[SSDPRequest alloc] initWithDelegate:self];
+    [_queueTable registerForDraggedTypes:[NSArray arrayWithObject:(NSString*)kUTTypeFileURL]];
+    _fileNames = [[NSMutableArray alloc] init];
+    _filePaths = [[NSMutableArray alloc] init];
+
     
     // Send initial SSDP search request
     [ssdp ssdpMSEARCHRequest];
@@ -96,6 +105,8 @@
     // Stop HTTP server
     [_server stop];
 }
+
+#pragma mark SSDP Handling
 
 -(void)gotSSDPResponseWithLocation:(NSString *)location UDN:(NSString *)UDN
 {
@@ -210,6 +221,8 @@
             
             // Fix tags of remaining devices
             NSInteger count = [_devList numberOfItems];
+            if (count == 0)
+                [_devList addItemWithTitle:@"No device found"];
             for (NSUInteger i=idx; i<count;i++)
             {
                 [[_devList itemAtIndex:i] setTag:i-1];
@@ -235,6 +248,30 @@
             }
         }
     }
+}
+
+#pragma mark UPNP Handling
+
+- (void)addFiles:(NSArray *)files
+{
+    // Save full filepaths
+    [_filePaths addObjectsFromArray:files];
+    
+    // Save filenames (last component of string)
+    for (NSString *file in files)
+        [_fileNames addObject:[[file componentsSeparatedByString:@"/"] lastObject]];
+    
+    // Start playback of first file
+    // TODO: Case when 1. file is already playing
+    // TODO: Set NextFile
+    [self playFile:[files firstObject]];
+    [self nextFile:[files lastObject]];
+    
+    // Update GUI
+    [_queueTable reloadData];
+    
+    if ([_filePaths count]>1)
+        [_queueDrawer open];
 }
 
 - (void)playFile:(NSString *)filePath
@@ -275,10 +312,26 @@
                 [img setSize:NSMakeSize(100, 100)];
                 [_dragView setImage:img];
                 [_lastDevice printInfoVerbose];
+                _lastDevice = nil;
             }
         });
         
     });
+    
+}
+
+- (void)nextFile:(NSString *)filePath
+{
+    // TODO: Add next file to HTTP server
+//    [_server setFilePath:filePath];
+    
+    // Build address
+    NSString *filename = [[filePath componentsSeparatedByString:@"/"] lastObject];
+    NSString *address = [NSString stringWithFormat:@"%@/%@", _serverAddress, filename];
+    
+    // Set next file
+    if (_lastDevice)
+        [_lastDevice nextFile:filePath atAddress:address];
     
 }
 
@@ -389,6 +442,8 @@
     return [NSString stringWithFormat:@"%@:%@:%@",h_str,m_str,s_str];
 }
 
+#pragma mark IBActions
+
 - (IBAction)updateSSDP:(id)sender
 {
     [ssdp ssdpMSEARCHRequest];
@@ -404,6 +459,38 @@
         NSString *pos = [self position:fraction withDuration:_dur];
         [[[_lastDevice services] objectForKey:@"AVTService"] seek:@"0" Unit:@"REL_TIME" Target:pos];
     });
+}
+
+#pragma mark Table View (Queue)
+
+- (NSInteger)numberOfRowsInTableView:(NSTableView *)aTableView
+{
+    return [_fileNames count];
+}
+
+- (id)tableView:(NSTableView *)aTableView objectValueForTableColumn:(NSTableColumn *)aTableColumn row:(NSInteger)rowIndex
+{
+    return [_fileNames objectAtIndex:rowIndex];
+}
+
+- (BOOL)tableView:(NSTableView *)aTableView
+       acceptDrop:(id<NSDraggingInfo>)info
+              row:(NSInteger)row
+    dropOperation:(NSTableViewDropOperation)operation
+{
+    NSPasteboard *pboard = [info draggingPasteboard];
+    NSArray *files = [pboard propertyListForType:NSFilenamesPboardType];
+    
+    NSLog(@"Drop: %@", files);
+    return YES;
+}
+
+- (NSDragOperation)tableView:(NSTableView *)aTableView validateDrop:(id<NSDraggingInfo>)info proposedRow:(NSInteger)row proposedDropOperation:(NSTableViewDropOperation)operation
+{
+    if (operation == NSTableViewDropAbove)
+        return NSDragOperationCopy;
+    
+    return NSDragOperationNone;
 }
 
 

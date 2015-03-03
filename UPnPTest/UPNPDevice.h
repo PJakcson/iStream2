@@ -25,5 +25,6 @@
 -(void)updateProtocolInfo;
 -(bool)checkValidity;
 -(bool)playFile:(NSString *)filePath atAddress:(NSString *)address;
+-(bool)nextFile:(NSString *)filePath atAddress:(NSString *)address;
 
 @end

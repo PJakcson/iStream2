@@ -20,5 +20,6 @@
 -(NSDictionary *)getPositionInfo:(NSString *)instanceID;
 -(NSDictionary *)getDeviceCapabilities:(NSString *)instanceID;
 -(bool)setMediaURI:(NSString *)URI MetaData:(NSString *)meta ID:(NSString *)instanceID;
+-(bool)setNextMediaURI:(NSString *)URI MetaData:(NSString *)meta ID:(NSString *)instanceID;
 
 @end

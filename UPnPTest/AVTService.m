@@ -156,5 +156,21 @@
     return true;
 }
 
+-(bool)setNextMediaURI:(NSString *)URI MetaData:(NSString *)meta ID:(NSString *)instanceID
+{
+    NSString *soapAction = @"SetNextAVTransportURI";
+    NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:instanceID,@"InstanceID",URI,@"NextURI",meta,@"NextURIMetaData", nil];
+    NSData *returnData;
+    if ([self action:soapAction parameters:params returnValues:&returnData])
+        return false;
+    
+    //    XMLDictionaryParser *XMLParser = [XMLDictionaryParser sharedInstance];
+    //    NSDictionary *dict = [XMLParser dictionaryWithData:returnData];
+    //
+    //    NSLog(@"%@", dict);
+    
+    return true;
+}
+
 
 @end

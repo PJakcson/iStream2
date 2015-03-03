@@ -2,8 +2,8 @@
 //  DragView.m
 //  UPnPTest
 //
-//  Created by Flo on 24.02.15.
-//  Copyright (c) 2015 florianbethke. All rights reserved.
+//  Created by Florian Bethke on 24.02.15.
+//  Copyright (c) 2015 Florian Bethke. All rights reserved.
 //
 
 #import "DragView.h"
@@ -38,7 +38,7 @@
 
 -(NSDragOperation) draggingUpdated:(id<NSDraggingInfo>)sender
 {
-    return NSDragOperationEvery;
+    return NSDragOperationCopy;
 }
 
 - (BOOL)performDragOperation:(id<NSDraggingInfo>)sender
@@ -52,7 +52,7 @@
     
     DDLogInfo(@"%@", [files objectAtIndex:0]);
     
-    [(AppDelegate *)[[NSApplication sharedApplication] delegate] playFile:[files objectAtIndex:0]];
+    [(AppDelegate *)[[NSApplication sharedApplication] delegate] addFiles:files];
 
     return false;
 }

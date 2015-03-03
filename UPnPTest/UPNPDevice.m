@@ -93,6 +93,23 @@
     return true;
 }
 
+-(bool)nextFile:(NSString *)filePath atAddress:(NSString *)address
+{
+    // TODO: Check if file type is supported by device
+    
+    if (!_validDevice)
+        return false;
+    
+    // Create DIDL metadata
+    NSString *meta = [DIDLMetadata metadataWithFile:filePath address:address];
+    
+    // Send URI to UPnP device
+    if (![[_services objectForKey:@"AVTService"] setNextMediaURI:address MetaData:meta ID:@"0"])
+        return false;
+    
+    return true;
+}
+
 -(void)printInfoVerbose
 {
     DDLogVerbose(@"Name: %@", _friendlyName);

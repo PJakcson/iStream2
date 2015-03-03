@@ -18,6 +18,8 @@
                 <outlet property="dragView" destination="c8J-qd-HEt" id="Wsg-qJ-ei7"/>
                 <outlet property="durLabel" destination="vJA-fa-od8" id="tfJ-Fa-gr8"/>
                 <outlet property="posLabel" destination="FeP-6H-JaR" id="WOy-bn-rU3"/>
+                <outlet property="queueDrawer" destination="ZSY-0A-cvb" id="qzf-Qx-6Vq"/>
+                <outlet property="queueTable" destination="RfE-D3-9Dx" id="cM5-Tg-81z"/>
                 <outlet property="slider" destination="OTk-XD-jGl" id="Kb8-Jo-Es7"/>
                 <outlet property="toggleDrawer" destination="Q1j-OB-3rx" id="UsP-dR-qT4"/>
                 <outlet property="wheel" destination="gfa-Ja-6qF" id="NPV-p6-g4e"/>
@@ -179,11 +181,21 @@
                             <action selector="updateSSDP:" target="Voe-Tx-rLC" id="yF8-GX-NRm"/>
                         </connections>
                     </button>
+                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="mNY-bt-CcM">
+                        <rect key="frame" x="264" y="179" width="21" height="21"/>
+                        <buttonCell key="cell" type="squareTextured" bezelStyle="texturedSquare" imagePosition="overlaps" alignment="center" state="on" borderStyle="border" imageScaling="axesIndependently" inset="2" id="9VT-jq-GAr">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="toggle:" target="ZSY-0A-cvb" id="Uxf-U3-IBs"/>
+                        </connections>
+                    </button>
                 </subviews>
             </view>
-            <point key="canvasLocation" x="340" y="73.5"/>
+            <point key="canvasLocation" x="188" y="141.5"/>
         </window>
-        <customView id="xQQ-Va-2Hr" userLabel="Drawer Content View">
+        <customView id="xQQ-Va-2Hr" userLabel="BottomDrawer">
             <rect key="frame" x="0.0" y="0.0" width="300" height="70"/>
             <autoresizingMask key="autoresizingMask"/>
             <subviews>
@@ -235,6 +247,76 @@
             <connections>
                 <outlet property="contentView" destination="xQQ-Va-2Hr" id="Xwl-0g-AqA"/>
                 <outlet property="parentWindow" destination="QvC-M9-y7g" id="61S-Qx-aa4"/>
+            </connections>
+        </drawer>
+        <customView id="mdV-Zc-Tgb" userLabel="RightDrawer">
+            <rect key="frame" x="0.0" y="0.0" width="148" height="218"/>
+            <autoresizingMask key="autoresizingMask"/>
+            <subviews>
+                <scrollView autohidesScrollers="YES" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" hasHorizontalScroller="NO" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="e0a-Te-Ywi">
+                    <rect key="frame" x="11" y="20" width="127" height="178"/>
+                    <clipView key="contentView" id="uE8-SX-wVs">
+                        <rect key="frame" x="1" y="0.0" width="238" height="134"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" alternatingRowBackgroundColors="YES" columnReordering="NO" multipleSelection="NO" emptySelection="NO" autosaveColumns="NO" typeSelect="NO" headerView="pwz-FR-E7s" id="RfE-D3-9Dx">
+                                <rect key="frame" x="0.0" y="0.0" width="238" height="134"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <size key="intercellSpacing" width="3" height="2"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <color key="gridColor" name="gridColor" catalog="System" colorSpace="catalog"/>
+                                <tableColumns>
+                                    <tableColumn editable="NO" width="122.39453125" minWidth="40" maxWidth="1000" id="ZNC-9j-Hed">
+                                        <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="Queue">
+                                            <font key="font" metaFont="smallSystem"/>
+                                            <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
+                                        </tableHeaderCell>
+                                        <textFieldCell key="dataCell" lineBreakMode="truncatingTail" selectable="YES" editable="YES" alignment="left" title="Text Cell" id="kfr-jm-cU2">
+                                            <font key="font" metaFont="system"/>
+                                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                        <tableColumnResizingMask key="resizingMask" resizeWithTable="YES"/>
+                                    </tableColumn>
+                                </tableColumns>
+                                <connections>
+                                    <outlet property="dataSource" destination="Voe-Tx-rLC" id="5nz-Le-LHO"/>
+                                </connections>
+                            </tableView>
+                        </subviews>
+                        <color key="backgroundColor" red="1" green="0.94602372793206924" blue="0.98130511462018233" alpha="1" colorSpace="calibratedRGB"/>
+                    </clipView>
+                    <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" doubleValue="1" horizontal="YES" id="Dh3-QU-eXo">
+                        <rect key="frame" x="1" y="119" width="223" height="15"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </scroller>
+                    <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="NO" id="2Uq-xI-lOk">
+                        <rect key="frame" x="224" y="17" width="15" height="102"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </scroller>
+                    <tableHeaderView key="headerView" id="pwz-FR-E7s">
+                        <rect key="frame" x="0.0" y="0.0" width="238" height="17"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </tableHeaderView>
+                </scrollView>
+            </subviews>
+            <constraints>
+                <constraint firstAttribute="bottom" secondItem="e0a-Te-Ywi" secondAttribute="bottom" constant="20" id="1YG-OY-sKv"/>
+                <constraint firstAttribute="centerX" secondItem="e0a-Te-Ywi" secondAttribute="centerX" id="2wd-cH-Khd"/>
+                <constraint firstItem="e0a-Te-Ywi" firstAttribute="top" secondItem="mdV-Zc-Tgb" secondAttribute="top" constant="20" id="JQC-HB-RbB"/>
+                <constraint firstItem="e0a-Te-Ywi" firstAttribute="leading" secondItem="mdV-Zc-Tgb" secondAttribute="leading" constant="11" id="WxJ-Jr-utZ"/>
+                <constraint firstAttribute="centerY" secondItem="e0a-Te-Ywi" secondAttribute="centerY" id="p2P-fb-FeK"/>
+            </constraints>
+            <point key="canvasLocation" x="268" y="241"/>
+        </customView>
+        <drawer trailingOffset="15" id="ZSY-0A-cvb">
+            <size key="contentSize" width="125" height="100"/>
+            <size key="minContentSize" width="125" height="0.0"/>
+            <size key="maxContentSize" width="300" height="10000"/>
+            <connections>
+                <outlet property="contentView" destination="mdV-Zc-Tgb" id="kwf-lF-LR1"/>
+                <outlet property="parentWindow" destination="QvC-M9-y7g" id="rCv-Yb-2Ab"/>
             </connections>
         </drawer>
     </objects>
