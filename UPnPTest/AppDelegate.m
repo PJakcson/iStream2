@@ -31,6 +31,7 @@
 @property (weak) IBOutlet NSSlider *slider;
 @property (weak) IBOutlet NSButton *toggleDrawer;
 @property (weak) IBOutlet NSDrawer *queueDrawer;
+@property (weak) IBOutlet NSDrawer *sliderDrawer;
 @property (weak) IBOutlet NSTableView *queueTable;
 
 // General properties 
@@ -242,18 +243,8 @@
         if (_lastDevice)
         {
             if ([[_lastDevice UDN] isEqualToString:UDN]) {
-                _lastDevice = nil;
+                [self setDisabled];
                 _state = nil;
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    NSImage *img = [NSImage imageNamed:@"tv"];
-                    [_dragView setImage:img];
-                    [_toggleDrawer setEnabled:false];
-                    [_slider setEnabled:false];
-                    [_slider setDoubleValue:0.0];
-                    [_posLabel setStringValue:@"0:00:00"];
-                    [_durLabel setStringValue:@"0:00:00"];
-                    _lastDevice = nil;
-                });
             }
         }
     }
@@ -292,13 +283,14 @@
                 case NSAlertSecondButtonReturn:
                     DDLogInfo(@"Queue new file(s)");
                     
-                    // Set next file if neccessary
-                    NSUInteger idx = [_fileNames indexOfObject:_curURI];
+                    // Set next file if neccessary (currently playing last file in queue)
+                    NSUInteger idx = [_fileNames indexOfObject:[[_curURI componentsSeparatedByString:@"/"] lastObject]];
                     if (idx != NSNotFound && idx == [_fileNames count]-1)
                         [self nextFile:[files firstObject]];
                     break;
                     
                 case NSAlertThirdButtonReturn:
+                    // Do nothing, just return
                     DDLogInfo(@"Cancel adding new files");
                     return;
             }
@@ -370,7 +362,6 @@
             }
             else {
                 NSImage *img = [NSImage imageNamed:@"tv_err"];
-                [img setSize:NSMakeSize(100, 100)];
                 [_dragView setImage:img];
                 [_lastDevice printInfoVerbose];
                 _lastDevice = nil;
@@ -394,6 +385,32 @@
     
 }
 
+- (void)setDisabled
+{
+    dispatch_async(dispatch_get_main_queue(), ^{
+        // Set UI to disabled state
+        NSImage *img = [NSImage imageNamed:@"tv"];
+        [_dragView setImage:img];
+        [_toggleDrawer setEnabled:false];
+        [_toggleDrawer setState:NSOffState];
+        [_slider setEnabled:false];
+        [_slider setDoubleValue:0.0];
+        [_posLabel setStringValue:@"0:00:00"];
+        [_durLabel setStringValue:@"0:00:00"];
+        
+        // Close all drawers
+        [_sliderDrawer close];
+        [_queueDrawer close];
+        
+        // Delete queue
+        [_fileNames removeAllObjects];
+        [_filePaths removeAllObjects];
+        
+        // Reset last device
+        _lastDevice = nil;
+    });
+}
+
 - (void)update:(NSTimer *)t
 {
     // Get play state if _lastDevice exists
@@ -412,7 +429,7 @@
             
             // Set next file in queue
             if (idx != NSNotFound && idx < [_fileNames count]-1) {
-                [self nextFile:[_fileNames objectAtIndex:idx+1]];
+                [self nextFile:[_filePaths objectAtIndex:idx+1]];
             }
         }
         
@@ -420,18 +437,8 @@
         if (!positionInfo || !transportInfo) {
             positionInfo = [avt getPositionInfo:@"0"];
             transportInfo = [avt getTransportInfo:@"0"];
-            if (!positionInfo || !transportInfo) {
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    NSImage *img = [NSImage imageNamed:@"tv"];
-                    [_dragView setImage:img];
-                    [_toggleDrawer setEnabled:false];
-                    [_slider setEnabled:false];
-                    [_slider setDoubleValue:0.0];
-                    [_posLabel setStringValue:@"0:00:00"];
-                    [_durLabel setStringValue:@"0:00:00"];
-                    _lastDevice = nil;
-                });
-            }
+            if (!positionInfo || !transportInfo)
+                [self setDisabled];
         }
         
         NSString *oldstate = _state;
@@ -445,14 +452,7 @@
             if (![_state isEqualToString:oldstate]) {
                 // Case transitioning
                 if ([_state isEqualToString:@"STOPPED"]) {
-                    NSImage *img = [NSImage imageNamed:@"tv"];
-                    [_dragView setImage:img];
-                    [_toggleDrawer setEnabled:false];
-                    [_slider setEnabled:false];
-                    [_slider setDoubleValue:0.0];
-                    [_posLabel setStringValue:@"0:00:00"];
-                    [_durLabel setStringValue:@"0:00:00"];
-                    _lastDevice = nil;
+                    [self setDisabled];
                 } else if ([_state isEqualToString:@"PLAYING"]) {
                     NSImage *img = [NSImage imageNamed:@"tv_play"];
                     [_dragView setImage:img];
