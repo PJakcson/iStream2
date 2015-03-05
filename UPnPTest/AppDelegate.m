@@ -41,12 +41,14 @@
 @property (nonatomic, strong) NSTimer *tim;
 @property (nonatomic, strong) NSMutableArray *fileNames;
 @property (nonatomic, strong) NSMutableArray *filePaths;
+@property (nonatomic) NSUInteger slideCount;
 
 // Current device state
 @property (nonatomic, strong) NSString *state;
 @property (nonatomic, strong) NSString *pos;
 @property (nonatomic, strong) NSString *dur;
 @property (nonatomic, strong) NSString *curURI;
+@property (nonatomic, strong) NSString *type;
 
 
 @end
@@ -71,6 +73,7 @@
     [_queueTable setDoubleAction:@selector(doubleAction:)];
     _fileNames = [[NSMutableArray alloc] init];
     _filePaths = [[NSMutableArray alloc] init];
+    _slideCount = 0;
     
     // Send initial SSDP search request
     [ssdp ssdpMSEARCHRequest];
@@ -358,6 +361,7 @@
                 NSImage *img = [NSImage imageNamed:@"tv_play"];
                 [_dragView setImage:img];
                 _curURI = address;
+                _type = [[[DIDLMetadata getMIMEType:filePath] componentsSeparatedByString:@"/"] firstObject];
                 
                 // Select row in table view
                 NSUInteger idx = [_filePaths indexOfObject:filePath];
@@ -428,6 +432,7 @@
         // Delete queue
         [_fileNames removeAllObjects];
         [_filePaths removeAllObjects];
+        _slideCount = 0;
         
         // Reset last device
         _lastDevice = nil;
@@ -443,12 +448,37 @@
         NSDictionary *transportInfo = [avt getTransportInfo:@"0"];
         NSDictionary *mediaInfo = [avt getMediaInfo:@"0"];
         
+        // Try again, then disable
+        if (!positionInfo || !transportInfo) {
+            positionInfo = [avt getPositionInfo:@"0"];
+            transportInfo = [avt getTransportInfo:@"0"];
+            if (!positionInfo || !transportInfo) {
+                [self setDisabled];
+                return;
+            }
+        }
+        
+        // Image slideshow...
+        DDLogInfo(@"Type: %@", _type);
+        if ([_type isEqualToString:@"image"]) {
+            _slideCount++;
+            if (_slideCount == 10) {
+                _slideCount = 0;
+                NSString *filename = [[_curURI componentsSeparatedByString:@"/"] lastObject];
+                NSUInteger idx = [_fileNames indexOfObject:filename];
+                if (idx != NSNotFound && [_fileNames count] > idx+1)
+                    [self playFile:[_filePaths objectAtIndex:idx+1]];
+            }
+        }
+        
         // Check if current URI has changed
         NSString *newURI = [mediaInfo objectForKey:@"CurrentURI"];
         if (![_curURI isEqualToString:newURI]) {
             NSString *filename = [[newURI componentsSeparatedByString:@"/"] lastObject];
             NSUInteger idx = [_fileNames indexOfObject:filename];
             _curURI = newURI;
+            if (idx != NSNotFound)
+                _type = [[[DIDLMetadata getMIMEType:[_filePaths objectAtIndex:idx]] componentsSeparatedByString:@"/"] firstObject];
             
             // Set next file in queue
             if (idx != NSNotFound && idx < [_fileNames count]-1) {
@@ -458,14 +488,6 @@
             // Select row in table view
             NSIndexSet *idxset = [NSIndexSet indexSetWithIndex:idx];
             [_queueTable selectRowIndexes:idxset byExtendingSelection:NO];
-        }
-        
-        // Try again, then disable
-        if (!positionInfo || !transportInfo) {
-            positionInfo = [avt getPositionInfo:@"0"];
-            transportInfo = [avt getTransportInfo:@"0"];
-            if (!positionInfo || !transportInfo)
-                [self setDisabled];
         }
         
         NSString *oldstate = _state;
@@ -589,7 +611,7 @@
         [self playFile:[_filePaths objectAtIndex:row]];
 
         // Set next file if available
-        if ([_filePaths count]>row)
+        if ([_filePaths count]>row+1)
             [self nextFile:[_filePaths objectAtIndex:row+1]];
     }
 }
