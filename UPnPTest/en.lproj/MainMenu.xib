@@ -173,9 +173,9 @@
                         </connections>
                     </button>
                     <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="PPa-D4-g01">
-                        <rect key="frame" x="312" y="8" width="21" height="21"/>
-                        <buttonCell key="cell" type="squareTextured" bezelStyle="texturedSquare" image="update-25" imagePosition="overlaps" alignment="center" state="on" borderStyle="border" imageScaling="axesIndependently" inset="2" id="AjO-5h-1hJ">
-                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                        <rect key="frame" x="312" y="9" width="21" height="21"/>
+                        <buttonCell key="cell" type="squareTextured" bezelStyle="texturedSquare" image="reload" imagePosition="overlaps" alignment="center" state="on" borderStyle="border" imageScaling="axesIndependently" inset="2" id="AjO-5h-1hJ">
+                            <behavior key="behavior" lightByContents="YES"/>
                             <font key="font" metaFont="system"/>
                         </buttonCell>
                         <connections>
@@ -279,11 +279,11 @@
                         </subviews>
                         <nil key="backgroundColor"/>
                     </clipView>
-                    <scroller key="horizontalScroller" hidden="YES" appearanceType="vibrantLight" verticalHuggingPriority="750" doubleValue="1" horizontal="YES" id="Dh3-QU-eXo">
+                    <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" doubleValue="1" horizontal="YES" id="Dh3-QU-eXo">
                         <rect key="frame" x="1" y="119" width="223" height="15"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </scroller>
-                    <scroller key="verticalScroller" hidden="YES" appearanceType="vibrantLight" verticalHuggingPriority="750" doubleValue="1" horizontal="NO" id="2Uq-xI-lOk">
+                    <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" doubleValue="1" horizontal="NO" id="2Uq-xI-lOk">
                         <rect key="frame" x="224" y="17" width="15" height="102"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </scroller>
@@ -313,6 +313,6 @@
         </drawer>
     </objects>
     <resources>
-        <image name="update-25" width="25" height="25"/>
+        <image name="reload" width="75" height="75"/>
     </resources>
 </document>

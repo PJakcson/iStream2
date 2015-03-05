@@ -372,6 +372,15 @@
                                                       selector:@selector(update:)
                                                       userInfo:nil
                                                        repeats:true];
+                
+                // If (multiple!) image files: Enable slideshow timer
+                NSString *mime = [DIDLMetadata getMIMEType:filePath];
+                NSString *category = [[mime componentsSeparatedByString:@"/"] firstObject];
+                if ([category isEqualToString:@"image"]) {
+                    DDLogInfo(@"Playing image file!");
+//                    sleep(10);
+//                    [[[_lastDevice services] objectForKey:@"AVTService"] next:@"0"];
+                }
             }
             else {
                 NSImage *img = [NSImage imageNamed:@"tv_err"];

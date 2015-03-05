@@ -1,8 +1,14 @@
 {
   "images" : [
     {
-      "idiom" : "universal",
-      "filename" : "tv_err.pdf"
+      "idiom" : "mac",
+      "scale" : "1x",
+      "filename" : "tv_err.png"
+    },
+    {
+      "idiom" : "mac",
+      "scale" : "2x",
+      "filename" : "tv_err2.png"
     }
   ],
   "info" : {

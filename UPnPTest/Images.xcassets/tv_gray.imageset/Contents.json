@@ -1,8 +1,14 @@
 {
   "images" : [
     {
-      "idiom" : "universal",
-      "filename" : "tv_gray.pdf"
+      "idiom" : "mac",
+      "scale" : "1x",
+      "filename" : "tv_gray.png"
+    },
+    {
+      "idiom" : "mac",
+      "scale" : "2x",
+      "filename" : "tv_gray2.png"
     }
   ],
   "info" : {

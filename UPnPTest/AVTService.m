@@ -75,6 +75,38 @@
     return true;
 }
 
+-(bool)next:(NSString *)instanceID
+{
+    NSString *soapAction = @"Next";
+    NSDictionary *params = [[NSDictionary alloc] initWithObjectsAndKeys:instanceID,@"InstanceID", nil];
+    NSData *returnData;
+    if ([self action:soapAction parameters:params returnValues:&returnData])
+        return false;
+    
+    //    XMLDictionaryParser *XMLParser = [XMLDictionaryParser sharedInstance];
+    //    NSDictionary *dict = [XMLParser dictionaryWithData:returnData];
+    //
+    //    NSLog(@"%@", dict);
+    
+    return true;
+}
+
+-(bool)previous:(NSString *)instanceID
+{
+    NSString *soapAction = @"Previous";
+    NSDictionary *params = [[NSDictionary alloc] initWithObjectsAndKeys:instanceID,@"InstanceID", nil];
+    NSData *returnData;
+    if ([self action:soapAction parameters:params returnValues:&returnData])
+        return false;
+    
+    //    XMLDictionaryParser *XMLParser = [XMLDictionaryParser sharedInstance];
+    //    NSDictionary *dict = [XMLParser dictionaryWithData:returnData];
+    //
+    //    NSLog(@"%@", dict);
+    
+    return true;
+}
+
 -(NSDictionary *)getMediaInfo:(NSString *)instanceID
 {
     NSString *soapAction = @"GetMediaInfo";

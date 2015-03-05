@@ -13,6 +13,8 @@
 -(bool)play:(NSString *)instanceID;
 -(bool)pause:(NSString *)instanceID;
 -(bool)stop:(NSString *)instanceID;
+-(bool)next:(NSString *)instanceID;
+-(bool)previous:(NSString *)instanceID;
 -(bool)seek:(NSString *)instanceID Unit:(NSString *)unit Target:(NSString *)target;
 -(NSDictionary *)getMediaInfo:(NSString *)instanceID;
 -(NSDictionary *)getTransportInfo:(NSString *)instanceID;

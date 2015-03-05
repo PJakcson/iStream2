@@ -1,8 +1,14 @@
 {
   "images" : [
     {
-      "idiom" : "universal",
-      "filename" : "tv_pause.pdf"
+      "idiom" : "mac",
+      "scale" : "1x",
+      "filename" : "tv_pause.png"
+    },
+    {
+      "idiom" : "mac",
+      "scale" : "2x",
+      "filename" : "tv_pause2.png"
     }
   ],
   "info" : {

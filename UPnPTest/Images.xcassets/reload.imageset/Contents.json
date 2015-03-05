@@ -3,16 +3,17 @@
     {
       "idiom" : "mac",
       "scale" : "1x",
-      "filename" : "tv_play.png"
+      "filename" : "reload.png"
     },
     {
       "idiom" : "mac",
       "scale" : "2x",
-      "filename" : "tv_play2.png"
+      "filename" : "reload2.png"
     }
   ],
   "info" : {
     "version" : 1,
-    "author" : "xcode"
+    "author" : "xcode",
+    "template-rendering-intent" : "template"
   }
 }

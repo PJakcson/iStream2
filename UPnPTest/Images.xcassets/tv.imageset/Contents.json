@@ -1,8 +1,14 @@
 {
   "images" : [
     {
-      "idiom" : "universal",
-      "filename" : "tv.pdf"
+      "idiom" : "mac",
+      "scale" : "1x",
+      "filename" : "tv.png"
+    },
+    {
+      "idiom" : "mac",
+      "scale" : "2x",
+      "filename" : "tv2.png"
     }
   ],
   "info" : {
