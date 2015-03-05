@@ -160,7 +160,10 @@
     if (!_sockets)
         _sockets = [[NSMutableArray alloc] init];
     [_sockets addObject:newSocket];
-    [newSocket readDataWithTimeout:-1 tag:HTTP_REQUEST_HEADER];
+//    [newSocket readDataWithTimeout:-1 tag:HTTP_REQUEST_HEADER];
+    [newSocket readDataToData:[NSData dataWithBytes:"\x0D\x0A\x0D\x0A" length:4]
+                  withTimeout:-1
+                          tag:HTTP_REQUEST_HEADER];
 }
 
 - (void)socket:(GCDAsyncSocket *)sock didReadData:(NSData *)data withTag:(long)tag

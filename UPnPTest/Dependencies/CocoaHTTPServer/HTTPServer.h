@@ -49,7 +49,7 @@
 	NSLock *connectionsLock;
 	NSLock *webSocketsLock;
     
-    NSString *filePath;
+    NSMutableArray *filePaths;
 	
 	BOOL isRunning;
 }
@@ -196,7 +196,7 @@
 **/
 - (void)stop;
 - (void)stop:(BOOL)keepExistingConnections;
-- (void)setFilePath:(NSString *)filePath;
+- (void)addFilePaths:(NSArray *)paths;
 
 - (BOOL)isRunning;
 

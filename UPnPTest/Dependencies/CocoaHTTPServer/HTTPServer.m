@@ -95,7 +95,7 @@ static const int httpLogLevel = HTTP_LOG_LEVEL_INFO; // | HTTP_LOG_FLAG_TRACE;
 		
 		isRunning = NO;
         
-        filePath = @"";
+        filePaths = [[NSMutableArray alloc] init];
 	}
 	return self;
 }
@@ -474,9 +474,9 @@ static const int httpLogLevel = HTTP_LOG_LEVEL_INFO; // | HTTP_LOG_FLAG_TRACE;
 }
 
 // EDIT:
-- (void)setFilePath:(NSString *)path
+- (void)addFilePaths:(NSArray *)paths
 {
-    filePath = path;
+    [filePaths addObjectsFromArray:paths];
 }
 // EDIT END!
 
@@ -558,7 +558,7 @@ static const int httpLogLevel = HTTP_LOG_LEVEL_INFO; // | HTTP_LOG_FLAG_TRACE;
 	HTTPConnection *newConnection = (HTTPConnection *)[[connectionClass alloc] initWithAsyncSocket:newSocket
 	                                                                                 configuration:[self config]];
     // Edit:
-    [newConnection setFilePath:filePath];
+    [newConnection addFilePaths:filePaths];
     // End Edit!
 	[connectionsLock lock];
 	[connections addObject:newConnection];

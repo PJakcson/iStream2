@@ -63,7 +63,7 @@
   
 	NSMutableArray *responseDataSizes;
     
-    NSString *filePath;
+    NSMutableArray *filePaths;
 }
 
 - (id)initWithAsyncSocket:(GCDAsyncSocket *)newSocket configuration:(HTTPConfig *)aConfig;
@@ -93,7 +93,7 @@
 - (NSString *)filePathForURI:(NSString *)path;
 - (NSString *)filePathForURI:(NSString *)path allowDirectory:(BOOL)allowDirectory;
 - (NSObject<HTTPResponse> *)httpResponseForMethod:(NSString *)method URI:(NSString *)path;
-- (void)setFilePath:(NSString *)path;
+- (void)addFilePaths:(NSArray *)paths;
 - (WebSocket *)webSocketForURI:(NSString *)path;
 
 - (void)prepareForBodyWithSize:(UInt64)contentLength;

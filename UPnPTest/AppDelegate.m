@@ -15,12 +15,13 @@
 #import "DIDLMetadata.h"
 #import "HTTPServer.h"
 #import "DDTTYLogger.h"
+#import "DDFileLogger.h"
 #import "DragView.h"
-
 #import "GlobalLogging.h"
 
 @interface AppDelegate ()
 
+// UI Elements
 @property (weak) IBOutlet NSWindow *window;
 @property (weak) IBOutlet NSPopUpButton *devList;
 @property (weak) IBOutlet NSProgressIndicator *wheel;
@@ -32,19 +33,20 @@
 @property (weak) IBOutlet NSDrawer *queueDrawer;
 @property (weak) IBOutlet NSTableView *queueTable;
 
+// General properties 
 @property (nonatomic, strong) HTTPServer *server;
 @property (nonatomic, strong) NSString *serverAddress;
 @property (nonatomic, strong) UPNPDevice *lastDevice;
 @property (nonatomic, strong) NSTimer *tim;
-@property (nonatomic, strong) NSString *state;
-@property (nonatomic, strong) NSString *pos;
-@property (nonatomic, strong) NSString *dur;
-
 @property (nonatomic, strong) NSMutableArray *fileNames;
 @property (nonatomic, strong) NSMutableArray *filePaths;
 
-@property (atomic, strong) NSDictionary *positionInfo;
-@property (atomic, strong) NSDictionary *transportInfo;
+// Current device state
+@property (nonatomic, strong) NSString *state;
+@property (nonatomic, strong) NSString *pos;
+@property (nonatomic, strong) NSString *dur;
+@property (nonatomic, strong) NSString *curURI;
+
 
 @end
 
@@ -54,6 +56,10 @@
 {
     // Setup logger
     [DDLog addLogger:[DDTTYLogger sharedInstance]];
+    DDFileLogger *fileLogger = [[DDFileLogger alloc] init];
+    fileLogger.rollingFrequency = 60 * 60 * 24;
+    fileLogger.logFileManager.maximumNumberOfLogFiles = 7;
+    [DDLog addLogger:fileLogger];
     
     // Init variables
     _upnpDevices = [[NSMutableDictionary alloc] init];
@@ -129,7 +135,10 @@
         NSHTTPURLResponse *urlResponse;
         NSData *dat = [NSURLConnection sendSynchronousRequest:urlRequest returningResponse:&urlResponse error:nil];
         if ([urlResponse statusCode] != 200)    // Check availability
+        {
+            DDLogError(@"Error: Description file is unavailable!");
             return;
+        }
 
         DDLogVerbose(@"Device description: %@", [[NSString alloc] initWithData:dat encoding:NSUTF8StringEncoding]);
         XMLDictionaryParser *XMLParser = [XMLDictionaryParser sharedInstance];
@@ -254,6 +263,65 @@
 
 - (void)addFiles:(NSArray *)files
 {
+    // Enable files for HTTP serving
+    [_server addFilePaths:files];
+    
+    // Start modal if neccessary
+    if (_state && ![_state isEqualToString:@"STOPPED"]) {
+        NSAlert *alert = [[NSAlert alloc] init];
+        NSString *msg = [NSString stringWithFormat:@"%lu new file(s)!", (unsigned long)[files count]];
+        [alert setMessageText:msg];
+        [alert setInformativeText:@"Play new file(s) immediately or add to them to playback queue?"];
+        [alert addButtonWithTitle:@"Play"];
+        [alert addButtonWithTitle:@"Add to Queue"];
+        [alert addButtonWithTitle:@"Cancel"];
+        [alert beginSheetModalForWindow:self.window completionHandler:^(NSModalResponse rc) {
+            switch(rc) {
+                case NSAlertFirstButtonReturn:
+                    // Delete queue and start playing
+                    DDLogInfo(@"Play new file(s)");
+                    [_filePaths removeAllObjects];
+                    [_fileNames removeAllObjects];
+                    [self playFile:[files firstObject]];
+                    
+                    // Set next file if available
+                    if ([files count]>1)
+                        [self nextFile:[files objectAtIndex:1]];
+                    break;
+                    
+                case NSAlertSecondButtonReturn:
+                    DDLogInfo(@"Queue new file(s)");
+                    
+                    // Set next file if neccessary
+                    NSUInteger idx = [_fileNames indexOfObject:_curURI];
+                    if (idx != NSNotFound && idx == [_fileNames count]-1)
+                        [self nextFile:[files firstObject]];
+                    break;
+                    
+                case NSAlertThirdButtonReturn:
+                    DDLogInfo(@"Cancel adding new files");
+                    return;
+            }
+            
+            // Update file lists
+            [self updateFileLists:files];
+        }];
+
+    }
+    else {
+        // Update file lists
+        [self updateFileLists:files];
+        
+        // Play file
+        [self playFile:[files firstObject]];
+        if ([files count]>1)
+            [self nextFile:[files objectAtIndex:1]];
+
+    }
+}
+
+- (void)updateFileLists:(NSArray *)files
+{
     // Save full filepaths
     [_filePaths addObjectsFromArray:files];
     
@@ -261,17 +329,12 @@
     for (NSString *file in files)
         [_fileNames addObject:[[file componentsSeparatedByString:@"/"] lastObject]];
     
-    // Start playback of first file
-    // TODO: Case when 1. file is already playing
-    // TODO: Set NextFile
-    [self playFile:[files firstObject]];
-    [self nextFile:[files lastObject]];
-    
     // Update GUI
     [_queueTable reloadData];
     
-    if ([_filePaths count]>1)
+    if ([_filePaths count]>1) {
         [_queueDrawer open];
+    }
 }
 
 - (void)playFile:(NSString *)filePath
@@ -283,9 +346,6 @@
     // Build address
     NSString *filename = [[filePath componentsSeparatedByString:@"/"] lastObject];
     NSString *address = [NSString stringWithFormat:@"%@/%@", _serverAddress, filename];
-    
-    // Send file path to server
-    [_server setFilePath:filePath];
     
     // Play!
     NSString *currentUDN = [_udnList objectAtIndex:[[_devList selectedItem] tag]];
@@ -299,6 +359,7 @@
             if (result) {
                 NSImage *img = [NSImage imageNamed:@"tv_play"];
                 [_dragView setImage:img];
+                _curURI = address;
                 
                 // Start timer
                 _tim = [NSTimer scheduledTimerWithTimeInterval:1.0
@@ -322,12 +383,10 @@
 
 - (void)nextFile:(NSString *)filePath
 {
-    // TODO: Add next file to HTTP server
-//    [_server setFilePath:filePath];
-    
     // Build address
     NSString *filename = [[filePath componentsSeparatedByString:@"/"] lastObject];
     NSString *address = [NSString stringWithFormat:@"%@/%@", _serverAddress, filename];
+    DDLogInfo(@"Setting next URI: %@", address);
     
     // Set next file
     if (_lastDevice)
@@ -335,7 +394,6 @@
     
 }
 
-// TODO: Use events instead...
 - (void)update:(NSTimer *)t
 {
     // Get play state if _lastDevice exists
@@ -343,6 +401,20 @@
         AVTService *avt = [[_lastDevice services] objectForKey:@"AVTService"];
         NSDictionary *positionInfo = [avt getPositionInfo:@"0"];
         NSDictionary *transportInfo = [avt getTransportInfo:@"0"];
+        NSDictionary *mediaInfo = [avt getMediaInfo:@"0"];
+        
+        // Check if current URI has changed
+        NSString *newURI = [mediaInfo objectForKey:@"CurrentURI"];
+        if (![_curURI isEqualToString:newURI]) {
+            NSString *filename = [[newURI componentsSeparatedByString:@"/"] lastObject];
+            NSUInteger idx = [_fileNames indexOfObject:filename];
+            _curURI = newURI;
+            
+            // Set next file in queue
+            if (idx != NSNotFound && idx < [_fileNames count]-1) {
+                [self nextFile:[_fileNames objectAtIndex:idx+1]];
+            }
+        }
         
         // Try again, then disable
         if (!positionInfo || !transportInfo) {
@@ -452,7 +524,7 @@
 - (IBAction)seek:(id)sender
 {
     float fraction = [_slider floatValue]/100;
-    NSDate *newFireDate = [[_tim fireDate] dateByAddingTimeInterval:3.0];   // Workaround for slow clients (better: events!)
+    NSDate *newFireDate = [[_tim fireDate] dateByAddingTimeInterval:3.0];   // Workaround for slow clients
     [_tim setFireDate:newFireDate];
 
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{

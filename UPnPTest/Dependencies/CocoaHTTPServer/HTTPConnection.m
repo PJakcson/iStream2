@@ -211,7 +211,7 @@ static NSMutableArray *recentNonces;
 		
 		responseDataSizes = [[NSMutableArray alloc] initWithCapacity:5];
         
-        filePath = @"";
+        filePaths = [[NSMutableArray alloc] init];
 	}
 	return self;
 }
@@ -1665,21 +1665,29 @@ static NSMutableArray *recentNonces;
  * HTTPDataResponse is a wrapper for an NSData object, and may be used to send a custom response.
 **/
 // EDIT!
-- (NSObject<HTTPResponse> *)httpResponseForMethod:(NSString *)method URI:(NSString *)path
+- (NSObject<HTTPResponse> *)httpResponseForMethod:(NSString *)method URI:(NSString *)URI
 {
     HTTPLogTrace();
     
-    BOOL isDir = NO;
-    
-    if (filePath && [[NSFileManager defaultManager] fileExistsAtPath:filePath isDirectory:&isDir] && !isDir)
-        return [[HTTPAsyncFileResponse alloc] initWithFilePath:filePath forConnection:self];
+    // Find matching file path for URI
+    NSString *reqFile = [[URI componentsSeparatedByString:@"/"] lastObject];
+    for (NSString *path in filePaths) {
+        NSString *fileName = [[path componentsSeparatedByString:@"/"] lastObject];
+        NSString *escFileName = [fileName stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+        
+        if ([escFileName isEqualToString:reqFile]) {
+            // Found valid file => send it!
+            if ([[NSFileManager defaultManager] fileExistsAtPath:path isDirectory:NO])
+                return [[HTTPAsyncFileResponse alloc] initWithFilePath:path forConnection:self];
+        }
+    }
     
     return nil;
 }
 
-- (void)setFilePath:(NSString *)path
+- (void)addFilePaths:(NSArray *)paths
 {
-    filePath = path;
+    [filePaths addObjectsFromArray:paths];
 }
 // END EDIT!
 
@@ -1930,7 +1938,7 @@ static NSMutableArray *recentNonces;
     
     // EDIT
     
-    [response setHeaderField:@"Content-Type" value:[DIDLMetadata getMIMEType:filePath]];
+//    [response setHeaderField:@"Content-Type" value:[DIDLMetadata getMIMEType:filePath]];
     [response setHeaderField:@"contentFeatures.dlna.org" value:@"DLNA.ORG_PN=MPEG_PS_PAL;DLNA.ORG_OP=01;DLNA.ORG_CI=0;DLNA.ORG_FLAGS=01700000000000000000000000000000"];
     [response setHeaderField:@"transferMode.dlna.org" value:@"Streaming"];
     
