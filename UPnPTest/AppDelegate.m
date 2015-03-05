@@ -68,9 +68,9 @@
     [_wheel startAnimation:nil];
     ssdp = [[SSDPRequest alloc] initWithDelegate:self];
     [_queueTable registerForDraggedTypes:[NSArray arrayWithObject:(NSString*)kUTTypeFileURL]];
+    [_queueTable setDoubleAction:@selector(doubleAction:)];
     _fileNames = [[NSMutableArray alloc] init];
     _filePaths = [[NSMutableArray alloc] init];
-
     
     // Send initial SSDP search request
     [ssdp ssdpMSEARCHRequest];
@@ -275,9 +275,11 @@
                     [_fileNames removeAllObjects];
                     [self playFile:[files firstObject]];
                     
-                    // Set next file if available
+                    // Set next file if available, otherwise close drawer
                     if ([files count]>1)
                         [self nextFile:[files objectAtIndex:1]];
+                    else
+                        [_queueDrawer close];
                     break;
                     
                 case NSAlertSecondButtonReturn:
@@ -335,6 +337,10 @@
     if (_lastDevice)
         [(AVTService *)[[_lastDevice services] objectForKey:@"AVTService"] stop:@"0"];
     
+    // Stop timer
+    if (_tim)
+        [_tim invalidate];
+    
     // Build address
     NSString *filename = [[filePath componentsSeparatedByString:@"/"] lastObject];
     NSString *address = [NSString stringWithFormat:@"%@/%@", _serverAddress, filename];
@@ -352,6 +358,13 @@
                 NSImage *img = [NSImage imageNamed:@"tv_play"];
                 [_dragView setImage:img];
                 _curURI = address;
+                
+                // Select row in table view
+                NSUInteger idx = [_filePaths indexOfObject:filePath];
+                if (idx != NSNotFound) {
+                    NSIndexSet *idxset = [NSIndexSet indexSetWithIndex:idx];
+                    [_queueTable selectRowIndexes:idxset byExtendingSelection:NO];
+                }
                 
                 // Start timer
                 _tim = [NSTimer scheduledTimerWithTimeInterval:1.0
@@ -397,6 +410,7 @@
         [_slider setDoubleValue:0.0];
         [_posLabel setStringValue:@"0:00:00"];
         [_durLabel setStringValue:@"0:00:00"];
+        [_queueTable reloadData];
         
         // Close all drawers
         [_sliderDrawer close];
@@ -431,6 +445,10 @@
             if (idx != NSNotFound && idx < [_fileNames count]-1) {
                 [self nextFile:[_filePaths objectAtIndex:idx+1]];
             }
+            
+            // Select row in table view
+            NSIndexSet *idxset = [NSIndexSet indexSetWithIndex:idx];
+            [_queueTable selectRowIndexes:idxset byExtendingSelection:NO];
         }
         
         // Try again, then disable
@@ -542,7 +560,29 @@
 
 - (id)tableView:(NSTableView *)aTableView objectValueForTableColumn:(NSTableColumn *)aTableColumn row:(NSInteger)rowIndex
 {
-    return [_fileNames objectAtIndex:rowIndex];
+    NSUInteger cnt = [_fileNames count];
+    if (cnt && cnt >= rowIndex)
+        return [_fileNames objectAtIndex:rowIndex];
+    
+    return @"";
+}
+
+- (BOOL)tableView:(NSTableView *)tableView shouldSelectRow:(NSInteger)row
+{
+    return NO;
+}
+
+- (void)doubleAction:(id)sender
+{
+    NSInteger row = [_queueTable clickedRow];
+    if (row != -1) {
+        // Play new file
+        [self playFile:[_filePaths objectAtIndex:row]];
+
+        // Set next file if available
+        if ([_filePaths count]>row)
+            [self nextFile:[_filePaths objectAtIndex:row+1]];
+    }
 }
 
 - (BOOL)tableView:(NSTableView *)aTableView
@@ -550,10 +590,33 @@
               row:(NSInteger)row
     dropOperation:(NSTableViewDropOperation)operation
 {
+    // Get list of files
     NSPasteboard *pboard = [info draggingPasteboard];
     NSArray *files = [pboard propertyListForType:NSFilenamesPboardType];
+    NSRange idxrange = NSMakeRange(row, [files count]);
+    NSIndexSet *idxset = [NSIndexSet indexSetWithIndexesInRange:idxrange];
     
-    NSLog(@"Drop: %@", files);
+    // Enable files for HTTP serving
+    [_server addFilePaths:files];
+    
+    // Save full filepaths
+    [_filePaths insertObjects:files atIndexes:idxset];
+    
+    // Save filenames (last component of string)
+    NSMutableArray *filenames = [[NSMutableArray alloc] init];
+    for (NSString *file in files)
+        [filenames addObject:[[file componentsSeparatedByString:@"/"] lastObject]];
+    [_fileNames insertObjects:filenames atIndexes:idxset];
+    
+    // Update next file if neccessary
+    NSUInteger idx = [_fileNames indexOfObject:[[_curURI componentsSeparatedByString:@"/"] lastObject]];
+    if (idx != NSNotFound && idx == row-1)
+        [self nextFile:[files firstObject]];
+    
+    // Update GUI
+    [_queueTable reloadData];
+    DDLogInfo(@"Added files: %@ at row: %lu", files, (long)row);
+    
     return YES;
 }
 

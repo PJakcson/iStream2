@@ -78,6 +78,8 @@
         NSString *rsp = [[NSString  alloc] initWithData:*output encoding:NSUTF8StringEncoding];
         NSString *caller = NSStringFromClass([self class]);
         DDLogError(@"Error (%@.%@): Got a non 200 response: %ld. Data: %@", caller, soapAction, (long)[urlResponse statusCode], rsp);
+        if (ret == 0)
+            ret = -1;
     }else{
         ret = 0;
     }
