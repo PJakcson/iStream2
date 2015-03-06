@@ -10,6 +10,12 @@
 #import "AppDelegate.h"
 #import "GlobalLogging.h"
 
+@interface DragView ()
+
+@property (nonatomic, strong) NSImage *dropImg;
+
+@end
+
 @implementation DragView
 
 - (void)awakeFromNib
@@ -23,16 +29,20 @@
 
 -(NSDragOperation)draggingEntered:(id<NSDraggingInfo>)sender
 {
+    // Save old img
+    _dropImg = [self image];
+    
+    // Set new image
     NSImage *img = [NSImage imageNamed:@"tv"];
     [self setImage:img];
     
-    return NSDragOperationEvery;
+    return NSDragOperationCopy;
 }
 
 - (void)draggingExited:(id<NSDraggingInfo>)sender
 {
-    NSImage *img = [NSImage imageNamed:@"tv_gray"];
-    [self setImage:img];
+    // Restore old image
+    [self setImage:_dropImg];
 }
 
 
@@ -43,14 +53,12 @@
 
 - (BOOL)performDragOperation:(id<NSDraggingInfo>)sender
 {
-//    NSString *path = [[NSBundle mainBundle] pathForResource:@"tv_show-100" ofType:@"png"];
-//    NSImage *img = [[NSImage alloc] initWithContentsOfFile:path];
-//    [self setImage:img];
+    // Restore old image
+    [self setImage:_dropImg];
     
+    // Add droped files to queue
     NSPasteboard *pboard = [sender draggingPasteboard];
     NSArray *files = [pboard propertyListForType:NSFilenamesPboardType];
-    
-    DDLogInfo(@"%@", [files objectAtIndex:0]);
     
     [(AppDelegate *)[[NSApplication sharedApplication] delegate] addFiles:files];
 

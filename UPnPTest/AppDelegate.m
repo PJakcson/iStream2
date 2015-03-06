@@ -262,6 +262,7 @@
     
     // Start modal if neccessary
     if (_state && ![_state isEqualToString:@"STOPPED"]) {
+        [NSApp activateIgnoringOtherApps:YES];
         NSAlert *alert = [[NSAlert alloc] init];
         NSString *msg = [NSString stringWithFormat:@"%lu new file(s)!", (unsigned long)[files count]];
         [alert setMessageText:msg];
@@ -459,7 +460,6 @@
         }
         
         // Image slideshow...
-        DDLogInfo(@"Type: %@", _type);
         if ([_type isEqualToString:@"image"]) {
             _slideCount++;
             if (_slideCount == 10) {
