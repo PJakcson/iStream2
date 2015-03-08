@@ -426,17 +426,19 @@
         [_durLabel setStringValue:@"0:00:00"];
         [_queueTable reloadData];
         
-        // Close all drawers
-        [_sliderDrawer close];
-        [_queueDrawer close];
-        
-        // Delete queue
-        [_fileNames removeAllObjects];
-        [_filePaths removeAllObjects];
-        _slideCount = 0;
-        
-        // Reset last device
-        _lastDevice = nil;
+        if (![_state isEqualToString:@"STOPPED"]) {
+            // Close all drawers
+            [_sliderDrawer close];
+            [_queueDrawer close];
+            
+            // Delete queue
+            [_fileNames removeAllObjects];
+            [_filePaths removeAllObjects];
+            _slideCount = 0;
+            
+            // Reset last device
+            _lastDevice = nil;
+        }
     });
 }
 
@@ -451,10 +453,13 @@
         
         // Try again, then disable
         if (!positionInfo || !transportInfo) {
+            sleep(3);
             positionInfo = [avt getPositionInfo:@"0"];
             transportInfo = [avt getTransportInfo:@"0"];
             if (!positionInfo || !transportInfo) {
+                _state = @"";
                 [self setDisabled];
+                DDLogInfo(@"Disabling in Update!");
                 return;
             }
         }
@@ -462,21 +467,36 @@
         // Image slideshow...
         if ([_type isEqualToString:@"image"]) {
             _slideCount++;
+            [_slider setEnabled:false];
+            DDLogInfo(@"Image: %lu", (unsigned long) _slideCount);
             if (_slideCount == 10) {
-                _slideCount = 0;
                 NSString *filename = [[_curURI componentsSeparatedByString:@"/"] lastObject];
                 NSUInteger idx = [_fileNames indexOfObject:filename];
-                if (idx != NSNotFound && [_fileNames count] > idx+1)
+                DDLogInfo(@"Next Info: %@, Idx: %lu", filename, (unsigned long)idx);
+                if (idx == NSNotFound) {    // TODO: Auch an anderen Stellen!
+                    NSString *escFileName = [filename stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+                    idx = [_fileNames indexOfObject:escFileName];
+                    DDLogInfo(@"Next Info: %@, Idx: %lu", escFileName, (unsigned long)idx);
+                }
+                    
+                if (idx != NSNotFound && [_fileNames count] > idx+1) {
                     [self playFile:[_filePaths objectAtIndex:idx+1]];
+                    _slideCount = 0;
+                }
             }
         }
+        else
+            [_slider setEnabled:true];
+
         
         // Check if current URI has changed
         NSString *newURI = [mediaInfo objectForKey:@"CurrentURI"];
         if (![_curURI isEqualToString:newURI]) {
             NSString *filename = [[newURI componentsSeparatedByString:@"/"] lastObject];
             NSUInteger idx = [_fileNames indexOfObject:filename];
-            _curURI = newURI;
+            if (filename != nil && ![filename isEqualToString:@""]) {   // Fix for wrong CurrentURI in Kodi
+                _curURI = newURI;
+            }
             if (idx != NSNotFound)
                 _type = [[[DIDLMetadata getMIMEType:[_filePaths objectAtIndex:idx]] componentsSeparatedByString:@"/"] firstObject];
             
@@ -486,8 +506,10 @@
             }
             
             // Select row in table view
-            NSIndexSet *idxset = [NSIndexSet indexSetWithIndex:idx];
-            [_queueTable selectRowIndexes:idxset byExtendingSelection:NO];
+            if (idx != NSNotFound) {
+                NSIndexSet *idxset = [NSIndexSet indexSetWithIndex:idx];
+                [_queueTable selectRowIndexes:idxset byExtendingSelection:NO];
+            }
         }
         
         NSString *oldstate = _state;
@@ -502,6 +524,7 @@
                 // Case transitioning
                 if ([_state isEqualToString:@"STOPPED"]) {
                     [self setDisabled];
+                    DDLogInfo(@"Disabling because Stopped!");
                 } else if ([_state isEqualToString:@"PLAYING"]) {
                     NSImage *img = [NSImage imageNamed:@"tv_play"];
                     [_dragView setImage:img];
