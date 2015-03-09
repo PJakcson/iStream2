@@ -472,6 +472,7 @@
     
     // Reset last device
     _lastDevice = nil;
+    _state = nil;
 }
 
 - (void)update:(NSTimer *)t
