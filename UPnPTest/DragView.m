@@ -32,11 +32,16 @@
     // Save old img
     _dropImg = [self image];
     
-    // Set new image
-    NSImage *img = [NSImage imageNamed:@"tv"];
-    [self setImage:img];
-    
-    return NSDragOperationCopy;
+    if ([(AppDelegate *)[[NSApplication sharedApplication] delegate] hasValidDevice]) {
+        
+        // Set new image
+        NSImage *img = [NSImage imageNamed:@"tv"];
+        [self setImage:img];
+        
+        return NSDragOperationCopy;
+    }
+    else
+        return NSDragOperationNone;
 }
 
 - (void)draggingExited:(id<NSDraggingInfo>)sender
@@ -46,10 +51,10 @@
 }
 
 
--(NSDragOperation) draggingUpdated:(id<NSDraggingInfo>)sender
-{
-    return NSDragOperationCopy;
-}
+//-(NSDragOperation) draggingUpdated:(id<NSDraggingInfo>)sender
+//{
+//    return NSDragOperationCopy;
+//}
 
 - (BOOL)performDragOperation:(id<NSDraggingInfo>)sender
 {
@@ -63,6 +68,11 @@
     [(AppDelegate *)[[NSApplication sharedApplication] delegate] addFiles:files];
 
     return false;
+}
+
+- (void)mouseDown:(NSEvent *)theEvent
+{    
+    [(AppDelegate *)[[NSApplication sharedApplication] delegate] togglePause];
 }
 
 @end

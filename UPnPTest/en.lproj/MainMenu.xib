@@ -138,7 +138,7 @@
             <windowStyleMask key="styleMask" titled="YES" miniaturizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="335" y="390" width="342" height="219"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="1440" height="877"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1177"/>
             <view key="contentView" id="EiT-Mj-1SZ">
                 <rect key="frame" x="0.0" y="0.0" width="342" height="219"/>
                 <autoresizingMask key="autoresizingMask"/>
@@ -184,7 +184,7 @@
                     </button>
                 </subviews>
             </view>
-            <point key="canvasLocation" x="276" y="151.5"/>
+            <point key="canvasLocation" x="373" y="275.5"/>
         </window>
         <customView id="xQQ-Va-2Hr" userLabel="BottomDrawer">
             <rect key="frame" x="0.0" y="0.0" width="300" height="70"/>
@@ -303,9 +303,9 @@
             <point key="canvasLocation" x="213" y="349"/>
         </customView>
         <drawer trailingOffset="15" id="ZSY-0A-cvb">
-            <size key="contentSize" width="125" height="100"/>
-            <size key="minContentSize" width="125" height="0.0"/>
-            <size key="maxContentSize" width="300" height="10000"/>
+            <size key="contentSize" width="150" height="100"/>
+            <size key="minContentSize" width="150" height="0.0"/>
+            <size key="maxContentSize" width="350" height="10000"/>
             <connections>
                 <outlet property="contentView" destination="mdV-Zc-Tgb" id="kwf-lF-LR1"/>
                 <outlet property="parentWindow" destination="QvC-M9-y7g" id="rCv-Yb-2Ab"/>
@@ -313,6 +313,6 @@
         </drawer>
     </objects>
     <resources>
-        <image name="reload" width="75" height="75"/>
+        <image name="reload" width="21" height="21"/>
     </resources>
 </document>

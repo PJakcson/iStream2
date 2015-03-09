@@ -75,9 +75,6 @@
     if (!_validDevice)
         return false;
     
-    // Stop current playback
-    [[_services objectForKey:@"AVTService"] stop:@"0"];
-    
     // Create DIDL metadata
     NSString *meta = [DIDLMetadata metadataWithFile:filePath address:address];
     

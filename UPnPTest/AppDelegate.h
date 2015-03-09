@@ -17,9 +17,11 @@
 
 @property (atomic, strong) NSMutableDictionary *upnpDevices;
 @property (atomic, strong) NSMutableArray *udnList;
+@property (atomic) bool hasValidDevice;
 
 - (void)playFile:(NSString *)filePath;
 - (void)addFiles:(NSArray *)files;
+- (void)togglePause;
 
 @end
 

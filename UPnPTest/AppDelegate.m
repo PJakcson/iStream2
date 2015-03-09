@@ -42,6 +42,7 @@
 @property (nonatomic, strong) NSMutableArray *fileNames;
 @property (nonatomic, strong) NSMutableArray *filePaths;
 @property (nonatomic) NSUInteger slideCount;
+@property (nonatomic) bool slideshow;
 
 // Current device state
 @property (nonatomic, strong) NSString *state;
@@ -74,6 +75,8 @@
     _fileNames = [[NSMutableArray alloc] init];
     _filePaths = [[NSMutableArray alloc] init];
     _slideCount = 0;
+    _slideshow = true;
+    _hasValidDevice = false;
     
     // Send initial SSDP search request
     [ssdp ssdpMSEARCHRequest];
@@ -120,7 +123,7 @@
 
 -(void)gotSSDPResponseWithLocation:(NSString *)location UDN:(NSString *)UDN
 {
-    DDLogInfo(@"Response: %@", location);
+    DDLogInfo(@"SSDP Response: %@", location);
     
     // Check if device is already known
     UPNPDevice *device = [_upnpDevices objectForKey:UDN];
@@ -140,7 +143,7 @@
         NSData *dat = [NSURLConnection sendSynchronousRequest:urlRequest returningResponse:&urlResponse error:nil];
         if ([urlResponse statusCode] != 200)    // Check availability
         {
-            DDLogError(@"Error: Description file is unavailable!");
+            DDLogError(@"Error: Device description file is unavailable!");
             return;
         }
 
@@ -210,6 +213,7 @@
                 [_devList removeAllItems];
                 [_devList setEnabled:true];
                 [_wheel stopAnimation:nil];
+                _hasValidDevice = true;
             }
             [_devList addItemWithTitle:[device friendlyName]];
             [[_devList lastItem] setTag:[_udnList count]-1];
@@ -234,8 +238,10 @@
             
             // Fix tags of remaining devices
             NSInteger count = [_devList numberOfItems];
-            if (count == 0)
+            if (count == 0) {
                 [_devList addItemWithTitle:@"No device found"];
+                _hasValidDevice = false;
+            }
             for (NSUInteger i=idx; i<count;i++)
             {
                 [[_devList itemAtIndex:i] setTag:i-1];
@@ -247,6 +253,7 @@
         {
             if ([[_lastDevice UDN] isEqualToString:UDN]) {
                 [self setDisabled];
+                [self reset];
                 _state = nil;
             }
         }
@@ -272,7 +279,7 @@
         [alert addButtonWithTitle:@"Cancel"];
         [alert beginSheetModalForWindow:self.window completionHandler:^(NSModalResponse rc) {
             switch(rc) {
-                case NSAlertFirstButtonReturn:
+                case NSAlertFirstButtonReturn: {
                     // Delete queue and start playing
                     DDLogInfo(@"Play new file(s)");
                     [_filePaths removeAllObjects];
@@ -285,20 +292,24 @@
                     else
                         [_queueDrawer close];
                     break;
+                }
                     
-                case NSAlertSecondButtonReturn:
+                case NSAlertSecondButtonReturn: {
                     DDLogInfo(@"Queue new file(s)");
                     
                     // Set next file if neccessary (currently playing last file in queue)
-                    NSUInteger idx = [_fileNames indexOfObject:[[_curURI componentsSeparatedByString:@"/"] lastObject]];
+                    NSString *filename = [[_curURI componentsSeparatedByString:@"/"] lastObject];
+                    NSUInteger idx = [self getIndexOfFile:filename];
                     if (idx != NSNotFound && idx == [_fileNames count]-1)
                         [self nextFile:[files firstObject]];
                     break;
+                }
                     
-                case NSAlertThirdButtonReturn:
+                case NSAlertThirdButtonReturn: {
                     // Do nothing, just return
                     DDLogInfo(@"Cancel adding new files");
                     return;
+                }
             }
             
             // Update file lists
@@ -338,8 +349,8 @@
 - (void)playFile:(NSString *)filePath
 {
     // Stop last file
-    if (_lastDevice)
-        [(AVTService *)[[_lastDevice services] objectForKey:@"AVTService"] stop:@"0"];
+//    if (_lastDevice)
+//        [(AVTService *)[[_lastDevice services] objectForKey:@"AVTService"] stop:@"0"];
     
     // Stop timer
     if (_tim)
@@ -363,6 +374,7 @@
                 [_dragView setImage:img];
                 _curURI = address;
                 _type = [[[DIDLMetadata getMIMEType:filePath] componentsSeparatedByString:@"/"] firstObject];
+                _slideshow = true;
                 
                 // Select row in table view
                 NSUInteger idx = [_filePaths indexOfObject:filePath];
@@ -377,15 +389,6 @@
                                                       selector:@selector(update:)
                                                       userInfo:nil
                                                        repeats:true];
-                
-                // If (multiple!) image files: Enable slideshow timer
-                NSString *mime = [DIDLMetadata getMIMEType:filePath];
-                NSString *category = [[mime componentsSeparatedByString:@"/"] firstObject];
-                if ([category isEqualToString:@"image"]) {
-                    DDLogInfo(@"Playing image file!");
-//                    sleep(10);
-//                    [[[_lastDevice services] objectForKey:@"AVTService"] next:@"0"];
-                }
             }
             else {
                 NSImage *img = [NSImage imageNamed:@"tv_err"];
@@ -409,7 +412,31 @@
     // Set next file
     if (_lastDevice)
         [_lastDevice nextFile:filePath atAddress:address];
+}
+
+- (void)togglePause
+{
+    // Playing any kind of media atm?
+    if (!_type || !_lastDevice)
+        return;
     
+    // Slideshow?
+    if ([_type isEqualToString:@"image"]) {
+        if (_slideshow == true) {
+            _slideshow = false;
+            [_dragView setImage:[NSImage imageNamed:@"tv_pause"]];
+        }
+        else {
+            _slideshow = true;
+            [_dragView setImage:[NSImage imageNamed:@"tv_play"]];
+        }
+    }
+    else {
+        if ([_state isEqualToString:@"PLAYING"])
+            [[[_lastDevice services] objectForKey:@"AVTService"] pause:@"0"];
+        else
+            [[[_lastDevice services] objectForKey:@"AVTService"] play:@"0"];
+    }
 }
 
 - (void)setDisabled
@@ -425,21 +452,26 @@
         [_posLabel setStringValue:@"0:00:00"];
         [_durLabel setStringValue:@"0:00:00"];
         [_queueTable reloadData];
-        
-        if (![_state isEqualToString:@"STOPPED"]) {
-            // Close all drawers
-            [_sliderDrawer close];
-            [_queueDrawer close];
-            
-            // Delete queue
-            [_fileNames removeAllObjects];
-            [_filePaths removeAllObjects];
-            _slideCount = 0;
-            
-            // Reset last device
-            _lastDevice = nil;
-        }
     });
+    
+    // Reset info about current media
+    _type = @"";
+}
+
+- (void)reset
+{
+    DDLogInfo(@"Resetting...");
+    // Close all drawers
+    [_sliderDrawer close];
+    [_queueDrawer close];
+    
+    // Delete queue
+    [_fileNames removeAllObjects];
+    [_filePaths removeAllObjects];
+    _slideCount = 0;
+    
+    // Reset last device
+    _lastDevice = nil;
 }
 
 - (void)update:(NSTimer *)t
@@ -451,7 +483,7 @@
         NSDictionary *transportInfo = [avt getTransportInfo:@"0"];
         NSDictionary *mediaInfo = [avt getMediaInfo:@"0"];
         
-        // Try again, then disable
+        // Try again, then disable & reset
         if (!positionInfo || !transportInfo) {
             sleep(3);
             positionInfo = [avt getPositionInfo:@"0"];
@@ -459,6 +491,7 @@
             if (!positionInfo || !transportInfo) {
                 _state = @"";
                 [self setDisabled];
+                [self reset];
                 DDLogInfo(@"Disabling in Update!");
                 return;
             }
@@ -466,22 +499,17 @@
         
         // Image slideshow...
         if ([_type isEqualToString:@"image"]) {
-            _slideCount++;
             [_slider setEnabled:false];
-            DDLogInfo(@"Image: %lu", (unsigned long) _slideCount);
-            if (_slideCount == 10) {
-                NSString *filename = [[_curURI componentsSeparatedByString:@"/"] lastObject];
-                NSUInteger idx = [_fileNames indexOfObject:filename];
-                DDLogInfo(@"Next Info: %@, Idx: %lu", filename, (unsigned long)idx);
-                if (idx == NSNotFound) {    // TODO: Auch an anderen Stellen!
-                    NSString *escFileName = [filename stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-                    idx = [_fileNames indexOfObject:escFileName];
-                    DDLogInfo(@"Next Info: %@, Idx: %lu", escFileName, (unsigned long)idx);
-                }
-                    
-                if (idx != NSNotFound && [_fileNames count] > idx+1) {
-                    [self playFile:[_filePaths objectAtIndex:idx+1]];
-                    _slideCount = 0;
+            if (_slideshow) {
+                _slideCount++;
+                if (_slideCount == 10) {
+                    NSString *filename = [[_curURI componentsSeparatedByString:@"/"] lastObject];
+                    NSUInteger idx = [self getIndexOfFile:filename];
+                        
+                    if (idx != NSNotFound && [_fileNames count] > idx+1) {
+                        [self playFile:[_filePaths objectAtIndex:idx+1]];
+                        _slideCount = 0;
+                    }
                 }
             }
         }
@@ -493,7 +521,7 @@
         NSString *newURI = [mediaInfo objectForKey:@"CurrentURI"];
         if (![_curURI isEqualToString:newURI]) {
             NSString *filename = [[newURI componentsSeparatedByString:@"/"] lastObject];
-            NSUInteger idx = [_fileNames indexOfObject:filename];
+            NSUInteger idx = [self getIndexOfFile:filename];
             if (filename != nil && ![filename isEqualToString:@""]) {   // Fix for wrong CurrentURI in Kodi
                 _curURI = newURI;
             }
@@ -524,7 +552,7 @@
                 // Case transitioning
                 if ([_state isEqualToString:@"STOPPED"]) {
                     [self setDisabled];
-                    DDLogInfo(@"Disabling because Stopped!");
+                    DDLogInfo(@"Stopped -> disabling!");
                 } else if ([_state isEqualToString:@"PLAYING"]) {
                     NSImage *img = [NSImage imageNamed:@"tv_play"];
                     [_dragView setImage:img];
@@ -546,6 +574,20 @@
             }
         });
     }
+}
+
+- (NSUInteger)getIndexOfFile:(NSString *)filename
+{
+    // Search array for file
+    NSUInteger idx = [_fileNames indexOfObject:filename];
+    
+    // If nothing is found: Try removing HTML escapes
+    if (idx == NSNotFound) {
+        NSString *escFileName = [filename stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+        idx = [_fileNames indexOfObject:escFileName];
+    }
+    
+    return idx;
 }
 
 // TODO: Use NSDate?
@@ -663,13 +705,13 @@
     [_fileNames insertObjects:filenames atIndexes:idxset];
     
     // Update next file if neccessary
-    NSUInteger idx = [_fileNames indexOfObject:[[_curURI componentsSeparatedByString:@"/"] lastObject]];
+    NSString *filename = [[_curURI componentsSeparatedByString:@"/"] lastObject];
+    NSUInteger idx = [self getIndexOfFile:filename];
     if (idx != NSNotFound && idx == row-1)
         [self nextFile:[files firstObject]];
     
     // Update GUI
     [_queueTable reloadData];
-    DDLogInfo(@"Added files: %@ at row: %lu", files, (long)row);
     
     return YES;
 }
