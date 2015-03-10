@@ -81,6 +81,7 @@
     _slideCount = 0;
     _slideshow = true;
     _hasValidDevice = false;
+    [_togglePopover setEnabled:false];
     
     // Send initial SSDP search request
     [ssdp ssdpMSEARCHRequest];
@@ -521,10 +522,15 @@
                 if (_slideCount == 10) {
                     NSString *filename = [[_curURI componentsSeparatedByString:@"/"] lastObject];
                     NSUInteger idx = [self getIndexOfFile:filename];
-                        
-                    if (idx != NSNotFound && [_fileNames count] > idx+1) {
-                        [self playFile:[_filePaths objectAtIndex:idx+1]];
-                        _slideCount = 0;
+                    
+                    // Supports NextFile?
+                    if ([_lastDevice hasNextURI])
+                        [[[_lastDevice services] objectForKey:@"AVTService"] next:@"0"];
+                    else {
+                        if (idx != NSNotFound && [_fileNames count] > idx+1) {
+                            [self playFile:[_filePaths objectAtIndex:idx+1]];
+                            _slideCount = 0;
+                        }
                     }
                 }
             }

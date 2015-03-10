@@ -18,6 +18,7 @@
 @property (nonatomic, strong) NSMutableDictionary *services;
 @property (nonatomic, strong) NSArray *protocols;
 @property (nonatomic) bool validDevice;
+@property (nonatomic) bool hasNextURI;
 @property (nonatomic, strong) NSString *deviceDescription;
 
 -(void)printInfo;

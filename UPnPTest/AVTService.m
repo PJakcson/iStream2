@@ -208,8 +208,10 @@
     NSString *soapAction = @"SetNextAVTransportURI";
     NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:instanceID,@"InstanceID",URI,@"NextURI",meta,@"NextURIMetaData", nil];
     NSData *returnData;
-    if ([self action:soapAction parameters:params returnValues:&returnData])
+    if ([self action:soapAction parameters:params returnValues:&returnData]) {
+        _hasNextURI = false;
         return false;
+    }
     
     //    XMLDictionaryParser *XMLParser = [XMLDictionaryParser sharedInstance];
     //    NSDictionary *dict = [XMLParser dictionaryWithData:returnData];

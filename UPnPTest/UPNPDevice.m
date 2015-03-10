@@ -22,6 +22,7 @@
     {
         _services = [[NSMutableDictionary alloc] init];
         _validDevice = false;   // Don't know if it's a valid device yet
+        _hasNextURI = false;
     }
     return self;
 }
@@ -68,13 +69,23 @@
         // Check AVTService.SCPD
         [[_services objectForKey:@"AVTService"] checkSCPDURL];
     
-        if ([[_services objectForKey:@"AVTService"] hasNextURI])
-            _deviceDescription = @"Device is fully supported!";
-        else
-            _deviceDescription = @"Device is not fully supported. Queueing and image slideshows might not work properly.";
+        // Update Device Description
+        [self updateDeviceDescription];
     }
     
     return _validDevice;
+}
+
+-(void)updateDeviceDescription
+{
+    if ([[_services objectForKey:@"AVTService"] hasNextURI]) {
+        _deviceDescription = @"Device is fully supported!";
+        _hasNextURI = true;
+    }
+    else {
+        _deviceDescription = @"Device is not fully supported. Queueing and image slideshows might not work properly.";
+        _hasNextURI = false;
+    }
 }
 
 -(bool)playFile:(NSString *)filePath atAddress:(NSString *)address
@@ -96,6 +107,9 @@
     if (![[_services objectForKey:@"AVTService"] play:@"0"])
         return false;
     
+    sleep(2);
+    [[_services objectForKey:@"AVTService"] setNextMediaURI:address MetaData:meta ID:@"0"];
+    
     return true;
 }
 
@@ -110,8 +124,10 @@
     NSString *meta = [DIDLMetadata metadataWithFile:filePath address:address];
     
     // Send URI to UPnP device
-    if (![[_services objectForKey:@"AVTService"] setNextMediaURI:address MetaData:meta ID:@"0"])
+    if (![[_services objectForKey:@"AVTService"] setNextMediaURI:address MetaData:meta ID:@"0"]) {
+        [self updateDeviceDescription];
         return false;
+    }
     
     return true;
 }
