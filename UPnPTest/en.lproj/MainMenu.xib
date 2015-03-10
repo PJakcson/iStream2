@@ -15,14 +15,17 @@
         <customObject id="Voe-Tx-rLC" customClass="AppDelegate">
             <connections>
                 <outlet property="devList" destination="Rqh-qe-iNG" id="oLc-9m-Ekc"/>
+                <outlet property="deviceInfo" destination="5M8-GP-qYd" id="JFd-38-FXj"/>
                 <outlet property="dragView" destination="c8J-qd-HEt" id="Wsg-qJ-ei7"/>
                 <outlet property="durLabel" destination="vJA-fa-od8" id="tfJ-Fa-gr8"/>
+                <outlet property="popover" destination="VI4-Jg-WAs" id="dei-yv-xkp"/>
                 <outlet property="posLabel" destination="FeP-6H-JaR" id="WOy-bn-rU3"/>
                 <outlet property="queueDrawer" destination="ZSY-0A-cvb" id="qzf-Qx-6Vq"/>
                 <outlet property="queueTable" destination="RfE-D3-9Dx" id="cM5-Tg-81z"/>
                 <outlet property="slider" destination="OTk-XD-jGl" id="Kb8-Jo-Es7"/>
                 <outlet property="sliderDrawer" destination="8km-sP-aqq" id="qL4-1w-I06"/>
                 <outlet property="toggleDrawer" destination="Q1j-OB-3rx" id="UsP-dR-qT4"/>
+                <outlet property="togglePopover" destination="SBO-IC-ub2" id="Kph-Mz-cM8"/>
                 <outlet property="wheel" destination="gfa-Ja-6qF" id="NPV-p6-g4e"/>
                 <outlet property="window" destination="QvC-M9-y7g" id="gIp-Ho-8D9"/>
             </connections>
@@ -138,7 +141,7 @@
             <windowStyleMask key="styleMask" titled="YES" miniaturizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="335" y="390" width="342" height="219"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1177"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1440" height="877"/>
             <view key="contentView" id="EiT-Mj-1SZ">
                 <rect key="frame" x="0.0" y="0.0" width="342" height="219"/>
                 <autoresizingMask key="autoresizingMask"/>
@@ -154,11 +157,10 @@
                                 </items>
                             </menu>
                         </popUpButtonCell>
+                        <connections>
+                            <action selector="popupAction:" target="Voe-Tx-rLC" id="KPm-Cb-ZbC"/>
+                        </connections>
                     </popUpButton>
-                    <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="c8J-qd-HEt" customClass="DragView">
-                        <rect key="frame" x="-2" y="34" width="346" height="187"/>
-                        <imageCell key="cell" enabled="NO" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" imageFrameStyle="grayBezel" id="ZAg-ns-FNI"/>
-                    </imageView>
                     <progressIndicator horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" maxValue="100" displayedWhenStopped="NO" bezeled="NO" indeterminate="YES" style="spinning" translatesAutoresizingMaskIntoConstraints="NO" id="gfa-Ja-6qF">
                         <rect key="frame" x="155" y="117" width="32" height="32"/>
                     </progressIndicator>
@@ -182,9 +184,23 @@
                             <action selector="updateSSDP:" target="Voe-Tx-rLC" id="yF8-GX-NRm"/>
                         </connections>
                     </button>
+                    <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="c8J-qd-HEt" customClass="DragView">
+                        <rect key="frame" x="-2" y="34" width="346" height="187"/>
+                        <imageCell key="cell" enabled="NO" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" imageFrameStyle="grayBezel" id="ZAg-ns-FNI"/>
+                    </imageView>
+                    <button horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="SBO-IC-ub2">
+                        <rect key="frame" x="8" y="196" width="14" height="18"/>
+                        <buttonCell key="cell" type="inline" bezelStyle="inline" image="NSRevealFreestandingTemplate" imagePosition="only" alignment="center" imageScaling="proportionallyDown" inset="2" id="ZAD-xi-aEx">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="smallSystemBold"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="togglePopover:" target="Voe-Tx-rLC" id="fcT-k4-GQ9"/>
+                        </connections>
+                    </button>
                 </subviews>
             </view>
-            <point key="canvasLocation" x="373" y="275.5"/>
+            <point key="canvasLocation" x="419" y="242.5"/>
         </window>
         <customView id="xQQ-Va-2Hr" userLabel="BottomDrawer">
             <rect key="frame" x="0.0" y="0.0" width="300" height="70"/>
@@ -311,8 +327,29 @@
                 <outlet property="parentWindow" destination="QvC-M9-y7g" id="rCv-Yb-2Ab"/>
             </connections>
         </drawer>
+        <viewController id="S4b-tU-3Da" userLabel="Popover View Controller">
+            <connections>
+                <outlet property="view" destination="5M8-GP-qYd" id="6by-AS-rNj"/>
+            </connections>
+        </viewController>
+        <popover id="VI4-Jg-WAs">
+            <connections>
+                <outlet property="contentViewController" destination="S4b-tU-3Da" id="P7b-Zd-8we"/>
+            </connections>
+        </popover>
+        <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" setsMaxLayoutWidthAtFirstLayout="YES" id="5M8-GP-qYd" userLabel="DeviceInfo">
+            <rect key="frame" x="0.0" y="0.0" width="139" height="17"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+            <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="center" title="Label" id="e4t-Wv-XpC">
+                <font key="font" metaFont="system"/>
+                <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+            </textFieldCell>
+            <point key="canvasLocation" x="319.5" y="431.5"/>
+        </textField>
     </objects>
     <resources>
+        <image name="NSRevealFreestandingTemplate" width="14" height="14"/>
         <image name="reload" width="21" height="21"/>
     </resources>
 </document>

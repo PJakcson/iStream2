@@ -10,6 +10,8 @@
 
 @interface AVTService : UPNPService
 
+@property (nonatomic) bool hasNextURI;
+
 -(bool)play:(NSString *)instanceID;
 -(bool)pause:(NSString *)instanceID;
 -(bool)stop:(NSString *)instanceID;
@@ -23,5 +25,6 @@
 -(NSDictionary *)getDeviceCapabilities:(NSString *)instanceID;
 -(bool)setMediaURI:(NSString *)URI MetaData:(NSString *)meta ID:(NSString *)instanceID;
 -(bool)setNextMediaURI:(NSString *)URI MetaData:(NSString *)meta ID:(NSString *)instanceID;
+-(void)checkSCPDURL;
 
 @end

@@ -16,6 +16,7 @@
 @property (nonatomic,strong) NSString *upnpNameSpace;
 @property (nonatomic,strong) NSString *controlURL;
 @property (nonatomic,strong) NSString *eventURL;
+@property (nonatomic,strong) NSString *SCPDURL;
 @property (nonatomic,strong) NSString *host;
 
 -(NSInteger)action:(NSString*)soapAction parameters:(NSDictionary*)parameters returnValues:(NSData**)output;

@@ -7,9 +7,21 @@
 //
 
 #import "AVTService.h"
+#import "UPNPService.h"
 #import "XMLDictionary.h"
+#import "GlobalLogging.h"
 
 @implementation AVTService
+
+-(instancetype)init
+{
+    self = [super init];
+    if (self)
+    {
+        _hasNextURI = false;
+    }
+    return self;
+}
 
 -(bool)play:(NSString *)instanceID
 {
@@ -190,6 +202,9 @@
 
 -(bool)setNextMediaURI:(NSString *)URI MetaData:(NSString *)meta ID:(NSString *)instanceID
 {
+    if (!_hasNextURI)
+        return false;
+    
     NSString *soapAction = @"SetNextAVTransportURI";
     NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:instanceID,@"InstanceID",URI,@"NextURI",meta,@"NextURIMetaData", nil];
     NSData *returnData;
@@ -202,6 +217,34 @@
     //    NSLog(@"%@", dict);
     
     return true;
+}
+
+-(void)checkSCPDURL
+{
+    // Get AVT.SCPD description
+    NSString *SCPD = [NSString stringWithFormat:@"%@%@",[self host], [self SCPDURL]];
+    NSURL *SCPDUrl = [NSURL URLWithString:SCPD];
+    NSURLRequest* urlRequest=[NSURLRequest requestWithURL:SCPDUrl
+                                              cachePolicy:NSURLRequestReloadIgnoringCacheData
+                                          timeoutInterval:1];
+    NSHTTPURLResponse *urlResponse;
+    NSData *dat = [NSURLConnection sendSynchronousRequest:urlRequest returningResponse:&urlResponse error:nil];
+    if ([urlResponse statusCode] != 200)    // Check availability
+    {
+        DDLogError(@"Error: SCPD description file is unavailable!");
+        return;
+    }
+    
+    DDLogVerbose(@"SCPD description: %@", [[NSString alloc] initWithData:dat encoding:NSUTF8StringEncoding]);
+    XMLDictionaryParser *XMLParser = [XMLDictionaryParser sharedInstance];
+    NSDictionary *dict = [XMLParser dictionaryWithData:dat];
+    
+    // Search for neccessary actions
+    NSArray *actions = [[dict objectForKey:@"actionList"] objectForKey:@"action"];
+    for (NSDictionary *action in actions) {
+        if ([[action objectForKey:@"name"] isEqualToString:@"SetNextAVTransportURI"])
+            _hasNextURI = true;
+    }
 }
 
 

@@ -33,6 +33,10 @@
 @property (weak) IBOutlet NSDrawer *queueDrawer;
 @property (weak) IBOutlet NSDrawer *sliderDrawer;
 @property (weak) IBOutlet NSTableView *queueTable;
+@property (weak) IBOutlet NSButton *togglePopover;
+@property (weak) IBOutlet NSPopover *popover;
+@property (weak) IBOutlet NSTextField *deviceInfo;
+
 
 // General properties 
 @property (nonatomic, strong) HTTPServer *server;
@@ -138,7 +142,7 @@
         NSURL *locUrl = [NSURL URLWithString:location];
         NSURLRequest* urlRequest=[NSURLRequest requestWithURL:locUrl
                                                   cachePolicy:NSURLRequestReloadIgnoringCacheData
-                                              timeoutInterval:0.5];
+                                              timeoutInterval:1];
         NSHTTPURLResponse *urlResponse;
         NSData *dat = [NSURLConnection sendSynchronousRequest:urlRequest returningResponse:&urlResponse error:nil];
         if ([urlResponse statusCode] != 200)    // Check availability
@@ -171,6 +175,7 @@
                 [upnpservice setUpnpNameSpace:[service objectForKey:@"serviceType"]];
                 [upnpservice setControlURL:[service objectForKey:@"controlURL"]];
                 [upnpservice setEventURL:[service objectForKey:@"eventSubURL"]];
+                [upnpservice setSCPDURL:[service objectForKey:@"SCPDURL"]];
                 [upnpservice setHost:host];
                 [device addService:upnpservice];
             }
@@ -179,6 +184,7 @@
                 [upnpservice setUpnpNameSpace:[service objectForKey:@"serviceType"]];
                 [upnpservice setControlURL:[service objectForKey:@"controlURL"]];
                 [upnpservice setEventURL:[service objectForKey:@"eventSubURL"]];
+                [upnpservice setSCPDURL:[service objectForKey:@"SCPDURL"]];
                 [upnpservice setHost:host];
                 [device addService:upnpservice];
             }
@@ -214,6 +220,14 @@
                 [_devList setEnabled:true];
                 [_wheel stopAnimation:nil];
                 _hasValidDevice = true;
+                [_togglePopover setEnabled:true];
+                
+                // Update string
+                NSString *currentUDN = [_udnList objectAtIndex:0];
+                NSString *descr =  [(UPNPDevice *)[_upnpDevices objectForKey:currentUDN] deviceDescription];
+                [_deviceInfo setStringValue:descr];
+                [_deviceInfo sizeToFit];
+                [_deviceInfo setNeedsDisplay];
             }
             [_devList addItemWithTitle:[device friendlyName]];
             [[_devList lastItem] setTag:[_udnList count]-1];
@@ -241,6 +255,7 @@
             if (count == 0) {
                 [_devList addItemWithTitle:@"No device found"];
                 _hasValidDevice = false;
+                [_togglePopover setEnabled:false];
             }
             for (NSUInteger i=idx; i<count;i++)
             {
@@ -646,6 +661,23 @@
         NSString *pos = [self position:fraction withDuration:_dur];
         [[[_lastDevice services] objectForKey:@"AVTService"] seek:@"0" Unit:@"REL_TIME" Target:pos];
     });
+}
+
+- (IBAction)togglePopover:(id)sender
+{
+    if ([_popover isShown])
+        [_popover close];
+    else
+        [_popover showRelativeToRect:[sender bounds] ofView:sender preferredEdge:NSMaxYEdge];
+}
+
+- (IBAction)popupAction:(id)sender
+{
+    NSString *currentUDN = [_udnList objectAtIndex:[[_devList selectedItem] tag]];
+    NSString *descr =  [(UPNPDevice *)[_upnpDevices objectForKey:currentUDN] deviceDescription];
+    [_deviceInfo setStringValue:descr];
+    [_deviceInfo sizeToFit];
+    [_deviceInfo setNeedsDisplay];
 }
 
 #pragma mark Table View (Queue)

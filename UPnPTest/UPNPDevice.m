@@ -13,7 +13,6 @@
 #import "DIDLMetadata.h"
 #import "GlobalLogging.h"
 
-
 @implementation UPNPDevice
 
 -(instancetype)init
@@ -49,7 +48,7 @@
 
 -(bool)checkValidity
 {
-    // TODO: MediaClient?
+    // Check if neccessary service are available
     if (([_services objectForKey:@"CMService"] != nil) && ([_services objectForKey:@"AVTService"] != nil))
     {
         _validDevice = true;
@@ -62,7 +61,17 @@
                 [service setControlURL:[[service controlURL] substringFromIndex:1]];
             if ([[[service eventURL] substringToIndex:1] isEqualToString:@"/"])
                 [service setEventURL:[[service eventURL] substringFromIndex:1]];
+            if ([[[service SCPDURL] substringToIndex:1] isEqualToString:@"/"])
+                [service setSCPDURL:[[service SCPDURL] substringFromIndex:1]];
         }
+        
+        // Check AVTService.SCPD
+        [[_services objectForKey:@"AVTService"] checkSCPDURL];
+    
+        if ([[_services objectForKey:@"AVTService"] hasNextURI])
+            _deviceDescription = @"Device is fully supported!";
+        else
+            _deviceDescription = @"Device is not fully supported. Queueing and image slideshows might not work properly.";
     }
     
     return _validDevice;
