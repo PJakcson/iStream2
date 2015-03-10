@@ -18,6 +18,7 @@
 @property (atomic, strong) NSMutableDictionary *upnpDevices;
 @property (atomic, strong) NSMutableArray *udnList;
 @property (atomic) bool hasValidDevice;
+@property (atomic) bool isBusy;
 
 - (void)playFile:(NSString *)filePath;
 - (void)addFiles:(NSArray *)files;

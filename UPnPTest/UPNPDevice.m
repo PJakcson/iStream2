@@ -95,6 +95,9 @@
     if (!_validDevice)
         return false;
     
+    // Stop playback
+    [[_services objectForKey:@"AVTService"] stop:@"0"];
+    
     // Create DIDL metadata
     NSString *meta = [DIDLMetadata metadataWithFile:filePath address:address];
     
@@ -106,9 +109,6 @@
     // Start playback
     if (![[_services objectForKey:@"AVTService"] play:@"0"])
         return false;
-    
-    sleep(2);
-    [[_services objectForKey:@"AVTService"] setNextMediaURI:address MetaData:meta ID:@"0"];
     
     return true;
 }

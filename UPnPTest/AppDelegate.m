@@ -82,6 +82,7 @@
     _slideshow = true;
     _hasValidDevice = false;
     [_togglePopover setEnabled:false];
+    _isBusy = false;
     
     // Send initial SSDP search request
     [ssdp ssdpMSEARCHRequest];
@@ -382,7 +383,9 @@
     [_wheel startAnimation:nil];
     
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+        _isBusy = true;
         bool result = [_lastDevice playFile:filePath atAddress:address];
+        _isBusy = false;
         dispatch_sync(dispatch_get_main_queue(), ^{
             [_wheel stopAnimation:nil];
             if (result) {
@@ -426,8 +429,11 @@
     DDLogInfo(@"Setting next URI: %@", address);
     
     // Set next file
-    if (_lastDevice)
+    if (_lastDevice) {
+        _isBusy = true;
         [_lastDevice nextFile:filePath atAddress:address];
+        _isBusy = false;
+    }
 }
 
 - (void)togglePause
@@ -489,10 +495,17 @@
     // Reset last device
     _lastDevice = nil;
     _state = nil;
+    _isBusy = false;
 }
 
 - (void)update:(NSTimer *)t
 {
+    // Skip if device is busy
+    if (_isBusy) {
+        DDLogInfo(@"isBusy, skipping Update...");
+        return;
+    }
+    
     // Get play state if _lastDevice exists
     if (_lastDevice) {
         AVTService *avt = [[_lastDevice services] objectForKey:@"AVTService"];
@@ -524,9 +537,12 @@
                     NSUInteger idx = [self getIndexOfFile:filename];
                     
                     // Supports NextFile?
-                    if ([_lastDevice hasNextURI])
+                    if ([_lastDevice hasNextURI]) {
                         [[[_lastDevice services] objectForKey:@"AVTService"] next:@"0"];
+                        DDLogInfo(@"Next...");
+                    }
                     else {
+                        DDLogInfo(@"NextURI not supported, playing next file...!");
                         if (idx != NSNotFound && [_fileNames count] > idx+1) {
                             [self playFile:[_filePaths objectAtIndex:idx+1]];
                             _slideCount = 0;
@@ -675,6 +691,7 @@
         [_popover close];
     else
         [_popover showRelativeToRect:[sender bounds] ofView:sender preferredEdge:NSMaxYEdge];
+    
 }
 
 - (IBAction)popupAction:(id)sender
