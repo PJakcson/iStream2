@@ -107,9 +107,17 @@
             addrString = @"" ;
         }
     }
+    
+    // Exit if no IP available!
     if ([addrString isEqualToString:@""]) {
-        DDLogError(@"Error: IP address not available!");
-        return;
+        DDLogError(@"Error: IP address not available! Exiting...");
+        NSAlert *alert = [[NSAlert alloc] init];
+        [alert setMessageText:@"No network connection available!"];
+        [alert setInformativeText:@"Check your network connection and try again."];
+        [alert addButtonWithTitle:@"Quit"];
+        [alert beginSheetModalForWindow:self.window completionHandler:^(NSModalResponse rc) {
+            exit(0);
+        }];
     }
     
     _serverAddress = [NSString stringWithFormat:@"http://%@:%d", addrString, [_server listeningPort]];
