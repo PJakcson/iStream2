@@ -538,11 +538,14 @@
                     
                     // Supports NextFile?
                     if ([_lastDevice hasNextURI]) {
-                        [[[_lastDevice services] objectForKey:@"AVTService"] next:@"0"];
-                        DDLogInfo(@"Next...");
+                        if (idx != NSNotFound && [_fileNames count] > idx+1) {
+                            [[[_lastDevice services] objectForKey:@"AVTService"] next:@"0"];
+                            _slideCount = 0;
+                        }
+                        DDLogInfo(@"NextURI supported, playing next file!");
                     }
                     else {
-                        DDLogInfo(@"NextURI not supported, playing next file...!");
+                        DDLogInfo(@"NextURI not supported, playing next file!");
                         if (idx != NSNotFound && [_fileNames count] > idx+1) {
                             [self playFile:[_filePaths objectAtIndex:idx+1]];
                             _slideCount = 0;
