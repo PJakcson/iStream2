@@ -238,6 +238,7 @@
                 [_deviceInfo setStringValue:descr];
                 [_deviceInfo sizeToFit];
                 [_deviceInfo setNeedsDisplay];
+                [_popover setContentSize:_deviceInfo.frame.size];
             }
             [_devList addItemWithTitle:[device friendlyName]];
             [[_devList lastItem] setTag:[_udnList count]-1];
@@ -712,6 +713,7 @@
     [_deviceInfo setStringValue:descr];
     [_deviceInfo sizeToFit];
     [_deviceInfo setNeedsDisplay];
+    [_popover setContentSize:_deviceInfo.frame.size];
 }
 
 #pragma mark Table View (Queue)
