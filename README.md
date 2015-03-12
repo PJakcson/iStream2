@@ -19,9 +19,9 @@ Playback performance is determined by the speed of your network connection, not 
 
 ## UPnPTest doesn't discover any devices. What's wrong? ##
 This could have multiple reasons:
-* Your computers firewall is blocking incoming and/or outgoing communication. Try adding an exception rule for UPnPTest, especially port 1900 UDP.
-* Your router is blocking multicast pakets. This happens especially when your computer is on WiFi and your playback device on ethernet (or vice versa). On some routers this can be solved by changing some settings (e.g. Multicast or WMM), on others you can't do anything.
-* Your device just isn't supported.
++ Your computers firewall is blocking incoming and/or outgoing communication. Try adding an exception rule for UPnPTest, especially port 1900 UDP.
++ Your router is blocking multicast pakets. This happens especially when your computer is on WiFi and your playback device on ethernet (or vice versa). On some routers this can be solved by changing some settings (e.g. Multicast or WMM), on others you can't do anything.
++ Your device just isn't supported.
 
 ## Filetype .xyz doesn't play on my device. ##
 UPnPTest supports all filetypes which are natively supported by your playback device. There is no transcoding at the moment, so you would have to convert the file into a compatible format beforehand. However, if you are sure that your media renderer supports this filetype (e.g. because the file can be played from USB), please contact support.
