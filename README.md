@@ -27,6 +27,9 @@ This could have multiple reasons:
 ## Filetype .xyz doesn't play on my device. ##
 UPnPTest supports all filetypes which are natively supported by your playback device. There is no transcoding at the moment, so you would have to convert the file into a compatible format beforehand. However, if you are sure that your media renderer supports this filetype (e.g. because the file can be played from USB), please contact support.
 
+ ## An advertised feature (e.g. fast-forwarding, seeking, queued playback, image slideshows...) doesn't work. Why? ##
+Device vendors have a great amount of freedom in implementing the streaming protocols. Additionally, many devices have bugs in their implementations which make them behave incorrectly. This makes it quite difficult to fully support all of them at once. If you want to help improving UPnPTest, please don't hesitate to contact support: If your problem can be found, your device will be fully supported in the next release.
+
 ## My video playback is sluggish, what should I do? ##
 The performance of the data transfer is solely determined by the performance of your network connection, UPnPTest has NO impact on it. WiFi connections might be too slow for high definition content, try optimizing it or switch over to a wired connection.
 
