@@ -17,6 +17,10 @@ Playback performance is determined by the speed of your network connection, not 
 
 # FAQ #
 
+## Is my TV / set-top box / console / AV-receiver supported? #
+
+If it has networking functionalities and confirmes to the UPnP standard, it is likely to be supported. To be sure, just download the free trail version LINK and try it out!
+
 ## UPnPTest doesn't discover any devices. What's wrong? ##
 This could have multiple reasons:
 
@@ -25,6 +29,7 @@ This could have multiple reasons:
 + Your device just isn't supported.
 
 ## Filetype .xyz doesn't play on my device. ##
+
 UPnPTest supports all filetypes which are natively supported by your playback device. There is no transcoding at the moment, so you would have to convert the file into a compatible format beforehand. However, if you are sure that your media renderer supports this filetype (e.g. because the file can be played from USB), please contact support.
 
  ## An advertised feature (e.g. fast-forwarding, seeking, queued playback, image slideshows...) doesn't work. Why? ##
