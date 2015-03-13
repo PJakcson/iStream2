@@ -52,6 +52,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		5C1142B31AB2E17A002F3BDB /* iStream.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = iStream.entitlements; sourceTree = "<group>"; };
 		5C335BC01A9CDFB900D53186 /* DragView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DragView.h; sourceTree = "<group>"; };
 		5C335BC11A9CDFB900D53186 /* DragView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DragView.m; sourceTree = "<group>"; };
 		5C37637B1A9BD7FE00C15C91 /* DDData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DDData.h; sourceTree = "<group>"; };
@@ -128,7 +129,7 @@
 		5CC47AC71A9A4828009C89BF /* AVTService.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AVTService.m; sourceTree = "<group>"; };
 		5CE00CA71A9A6B34004D72DC /* DIDLMetadata.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DIDLMetadata.h; sourceTree = "<group>"; };
 		5CE00CA81A9A6B34004D72DC /* DIDLMetadata.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DIDLMetadata.m; sourceTree = "<group>"; };
-		5CE279311A95D91D00E8D409 /* UPnPTest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = UPnPTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		5CE279311A95D91D00E8D409 /* iStream.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iStream.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5CE279351A95D91D00E8D409 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		5CE279361A95D91D00E8D409 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		5CE279371A95D91D00E8D409 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -263,6 +264,7 @@
 		5CE279281A95D91D00E8D409 = {
 			isa = PBXGroup;
 			children = (
+				5C1142B31AB2E17A002F3BDB /* iStream.entitlements */,
 				5CE279331A95D91D00E8D409 /* UPnPTest */,
 				5CE279321A95D91D00E8D409 /* Products */,
 			);
@@ -271,7 +273,7 @@
 		5CE279321A95D91D00E8D409 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				5CE279311A95D91D00E8D409 /* UPnPTest.app */,
+				5CE279311A95D91D00E8D409 /* iStream.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -318,9 +320,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		5CE279301A95D91D00E8D409 /* UPnPTest */ = {
+		5CE279301A95D91D00E8D409 /* iStream */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 5CE2794E1A95D91D00E8D409 /* Build configuration list for PBXNativeTarget "UPnPTest" */;
+			buildConfigurationList = 5CE2794E1A95D91D00E8D409 /* Build configuration list for PBXNativeTarget "iStream" */;
 			buildPhases = (
 				5CE2792D1A95D91D00E8D409 /* Sources */,
 				5CE2792E1A95D91D00E8D409 /* Frameworks */,
@@ -330,9 +332,9 @@
 			);
 			dependencies = (
 			);
-			name = UPnPTest;
+			name = iStream;
 			productName = UPnPTest;
-			productReference = 5CE279311A95D91D00E8D409 /* UPnPTest.app */;
+			productReference = 5CE279311A95D91D00E8D409 /* iStream.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -346,10 +348,15 @@
 				TargetAttributes = {
 					5CE279301A95D91D00E8D409 = {
 						CreatedOnToolsVersion = 6.1.1;
+						SystemCapabilities = {
+							com.apple.Sandbox = {
+								enabled = 1;
+							};
+						};
 					};
 				};
 			};
-			buildConfigurationList = 5CE2792C1A95D91D00E8D409 /* Build configuration list for PBXProject "UPnPTest" */;
+			buildConfigurationList = 5CE2792C1A95D91D00E8D409 /* Build configuration list for PBXProject "iStream" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -361,7 +368,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				5CE279301A95D91D00E8D409 /* UPnPTest */,
+				5CE279301A95D91D00E8D409 /* iStream */,
 			);
 		};
 /* End PBXProject section */
@@ -519,12 +526,13 @@
 		5CE2794F1A95D91D00E8D409 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon2;
+				CODE_SIGN_ENTITLEMENTS = iStream.entitlements;
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = UPnPTest/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.8;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = iStream;
 				SDKROOT = macosx;
 			};
 			name = Debug;
@@ -532,12 +540,13 @@
 		5CE279501A95D91D00E8D409 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon2;
+				CODE_SIGN_ENTITLEMENTS = iStream.entitlements;
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = UPnPTest/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.8;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = iStream;
 				SDKROOT = macosx;
 			};
 			name = Release;
@@ -545,7 +554,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		5CE2792C1A95D91D00E8D409 /* Build configuration list for PBXProject "UPnPTest" */ = {
+		5CE2792C1A95D91D00E8D409 /* Build configuration list for PBXProject "iStream" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5CE2794C1A95D91D00E8D409 /* Debug */,
@@ -554,7 +563,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		5CE2794E1A95D91D00E8D409 /* Build configuration list for PBXNativeTarget "UPnPTest" */ = {
+		5CE2794E1A95D91D00E8D409 /* Build configuration list for PBXNativeTarget "iStream" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5CE2794F1A95D91D00E8D409 /* Debug */,
