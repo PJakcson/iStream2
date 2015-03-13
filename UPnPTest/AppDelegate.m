@@ -137,7 +137,7 @@
 
 -(void)gotSSDPResponseWithLocation:(NSString *)location UDN:(NSString *)UDN
 {
-    DDLogInfo(@"SSDP Response: %@", location);
+    DDLogInfo(@"SSDP Response: %@, %@", location, UDN);
     
     // Check if device is already known
     UPNPDevice *device = [_upnpDevices objectForKey:UDN];
@@ -238,6 +238,7 @@
                 [_deviceInfo setStringValue:descr];
                 [_deviceInfo sizeToFit];
                 [_deviceInfo setNeedsDisplay];
+                [_popover setContentSize:_deviceInfo.frame.size];
             }
             [_devList addItemWithTitle:[device friendlyName]];
             [[_devList lastItem] setTag:[_udnList count]-1];
@@ -258,18 +259,26 @@
         
         // Remove device from UI (on main thread)
         dispatch_sync(dispatch_get_main_queue(), ^{
-            [_devList removeItemAtIndex:idx];
+            NSInteger itemidx = [_devList indexOfItemWithTag:idx];
+            if (itemidx != -1)
+                [_devList removeItemAtIndex:[_devList indexOfItemWithTag:itemidx]];
+            else
+                return;
             
-            // Fix tags of remaining devices
+            // Add placeholder if last device was jsut removed
             NSInteger count = [_devList numberOfItems];
             if (count == 0) {
                 [_devList addItemWithTitle:@"No device found"];
                 _hasValidDevice = false;
                 [_togglePopover setEnabled:false];
             }
-            for (NSUInteger i=idx; i<count;i++)
+            
+            // Fix tags of remaining devices
+            for (NSMenuItem *item in [_devList itemArray])
             {
-                [[_devList itemAtIndex:i] setTag:i-1];
+                NSInteger tag = [item tag];
+                if (tag > idx)
+                    [[_devList itemAtIndex:[_devList indexOfItemWithTag:tag]] setTag:tag-1];
             }
         });
         
@@ -712,6 +721,7 @@
     [_deviceInfo setStringValue:descr];
     [_deviceInfo sizeToFit];
     [_deviceInfo setNeedsDisplay];
+    [_popover setContentSize:_deviceInfo.frame.size];
 }
 
 #pragma mark Table View (Queue)

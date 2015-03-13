@@ -114,7 +114,7 @@ withFilterContext:(id)filterContext
         if ([[headerComponents firstObject] caseInsensitiveCompare:@"LOCATION:"] == NSOrderedSame)
             location = [[headerComponents objectAtIndex:1] stringByReplacingOccurrencesOfString:@"\r" withString:@""];
         else if ([[headerComponents firstObject] caseInsensitiveCompare:@"USN:"] == NSOrderedSame)
-            UDN = [[[headerComponents objectAtIndex:1] componentsSeparatedByString:@"::"] objectAtIndex:0];
+            UDN = [[[[headerComponents objectAtIndex:1] componentsSeparatedByString:@"::"] objectAtIndex:0] stringByReplacingOccurrencesOfString:@"\r" withString:@""];
         else if ([[headerComponents firstObject] caseInsensitiveCompare:@"NTS:"] == NSOrderedSame)
             NTS = [[headerComponents objectAtIndex:1]  stringByReplacingOccurrencesOfString:@"\r" withString:@""];
     }
