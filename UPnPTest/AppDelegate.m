@@ -36,7 +36,7 @@
 @property (weak) IBOutlet NSButton *togglePopover;
 @property (weak) IBOutlet NSPopover *popover;
 @property (weak) IBOutlet NSTextField *deviceInfo;
-
+@property (weak) IBOutlet NSMenuItem *openItem;
 
 // General properties 
 @property (nonatomic, strong) HTTPServer *server;
@@ -83,6 +83,7 @@
     _hasValidDevice = false;
     [_togglePopover setEnabled:false];
     _isBusy = false;
+    [_openItem setEnabled:false];
     
     // Send initial SSDP search request
     [ssdp ssdpMSEARCHRequest];
@@ -231,6 +232,7 @@
                 [_wheel stopAnimation:nil];
                 _hasValidDevice = true;
                 [_togglePopover setEnabled:true];
+                [_openItem setEnabled:true];
                 
                 // Update string
                 NSString *currentUDN = [_udnList objectAtIndex:0];
@@ -271,6 +273,7 @@
                 [_devList addItemWithTitle:@"No device found"];
                 _hasValidDevice = false;
                 [_togglePopover setEnabled:false];
+                [_openItem setEnabled:false];
             }
             
             // Fix tags of remaining devices
@@ -722,6 +725,39 @@
     [_deviceInfo sizeToFit];
     [_deviceInfo setNeedsDisplay];
     [_popover setContentSize:_deviceInfo.frame.size];
+}
+
+- (IBAction)openFile:(id)sender
+{
+    NSOpenPanel* openPanel = [NSOpenPanel openPanel];
+    
+    // Setup open panel
+    [openPanel setTitle:@"Choose any media files"];
+    [openPanel setShowsResizeIndicator:YES];
+    [openPanel setShowsHiddenFiles:NO];
+    [openPanel setCanChooseDirectories:NO];
+    [openPanel setCanCreateDirectories:NO];
+    [openPanel setAllowsMultipleSelection:YES];
+    
+    // Start panel
+    [openPanel beginSheetModalForWindow:_window
+                      completionHandler:^(NSInteger result) {
+                          
+                          if (result==NSOKButton) {
+                              
+                              NSArray *URLs = [openPanel URLs];
+                              NSMutableArray *files = [[NSMutableArray alloc] init];
+                              
+                              // Convert URL array to file array
+                              for (NSURL *url in URLs)
+                                  [files addObject:[[url path] stringByResolvingSymlinksInPath]];
+                              
+                              // Add files
+                              [self addFiles:files];
+                              
+                          }
+                          
+                      }];
 }
 
 #pragma mark Table View (Queue)

@@ -52,7 +52,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		5C1142B31AB2E17A002F3BDB /* iStream.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = iStream.entitlements; sourceTree = "<group>"; };
 		5C335BC01A9CDFB900D53186 /* DragView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DragView.h; sourceTree = "<group>"; };
 		5C335BC11A9CDFB900D53186 /* DragView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DragView.m; sourceTree = "<group>"; };
 		5C37637B1A9BD7FE00C15C91 /* DDData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DDData.h; sourceTree = "<group>"; };
@@ -264,7 +263,6 @@
 		5CE279281A95D91D00E8D409 = {
 			isa = PBXGroup;
 			children = (
-				5C1142B31AB2E17A002F3BDB /* iStream.entitlements */,
 				5CE279331A95D91D00E8D409 /* UPnPTest */,
 				5CE279321A95D91D00E8D409 /* Products */,
 			);
@@ -350,7 +348,7 @@
 						CreatedOnToolsVersion = 6.1.1;
 						SystemCapabilities = {
 							com.apple.Sandbox = {
-								enabled = 1;
+								enabled = 0;
 							};
 						};
 					};
@@ -526,8 +524,7 @@
 		5CE2794F1A95D91D00E8D409 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon2;
-				CODE_SIGN_ENTITLEMENTS = iStream.entitlements;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = UPnPTest/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
@@ -540,8 +537,7 @@
 		5CE279501A95D91D00E8D409 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon2;
-				CODE_SIGN_ENTITLEMENTS = iStream.entitlements;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = UPnPTest/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
