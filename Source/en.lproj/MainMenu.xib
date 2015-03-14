@@ -45,7 +45,12 @@
                                 </connections>
                             </menuItem>
                             <menuItem isSeparatorItem="YES" id="VOq-y0-SEH"/>
-                            <menuItem title="Preferences…" keyEquivalent="," id="BOF-NM-1cW"/>
+                            <menuItem title="Check for Updates..." id="vjA-b9-kJo">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="checkForUpdates:" target="uoo-nk-eGy" id="9pK-d3-d0j"/>
+                                </connections>
+                            </menuItem>
                             <menuItem isSeparatorItem="YES" id="wFC-TO-SCJ"/>
                             <menuItem title="Services" id="NMo-om-nkz">
                                 <modifierMask key="keyEquivalentModifierMask"/>
@@ -341,6 +346,7 @@
             </textFieldCell>
             <point key="canvasLocation" x="319.5" y="431.5"/>
         </textField>
+        <customObject id="uoo-nk-eGy" customClass="SUUpdater"/>
     </objects>
     <resources>
         <image name="NSRevealFreestandingTemplate" width="14" height="14"/>

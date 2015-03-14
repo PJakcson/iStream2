@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5C04D3321AB4985200A9B8A6 /* Sparkle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C04D3311AB4985200A9B8A6 /* Sparkle.framework */; };
+		5C04D3341AB4993900A9B8A6 /* Sparkle.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5C04D3311AB4985200A9B8A6 /* Sparkle.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		5C04D3361AB499FF00A9B8A6 /* dsa_pub.pem in Resources */ = {isa = PBXBuildFile; fileRef = 5C04D3351AB499FF00A9B8A6 /* dsa_pub.pem */; };
 		5C335BC21A9CDFB900D53186 /* DragView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C335BC11A9CDFB900D53186 /* DragView.m */; };
 		5C3763B91A9BD7FE00C15C91 /* DDData.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C37637C1A9BD7FE00C15C91 /* DDData.m */; };
 		5C3763BA1A9BD7FE00C15C91 /* DDNumber.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C37637E1A9BD7FE00C15C91 /* DDNumber.m */; };
@@ -51,7 +54,22 @@
 		5CE2793F1A95D91D00E8D409 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5CE2793D1A95D91D00E8D409 /* MainMenu.xib */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		5C04D3331AB4992600A9B8A6 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				5C04D3341AB4993900A9B8A6 /* Sparkle.framework in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
+		5C04D3311AB4985200A9B8A6 /* Sparkle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Sparkle.framework; path = Frameworks/Sparkle.framework; sourceTree = "<group>"; };
+		5C04D3351AB499FF00A9B8A6 /* dsa_pub.pem */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = dsa_pub.pem; sourceTree = "<group>"; };
 		5C335BC01A9CDFB900D53186 /* DragView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DragView.h; sourceTree = "<group>"; };
 		5C335BC11A9CDFB900D53186 /* DragView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DragView.m; sourceTree = "<group>"; };
 		5C37637B1A9BD7FE00C15C91 /* DDData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DDData.h; sourceTree = "<group>"; };
@@ -141,12 +159,21 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5C04D3321AB4985200A9B8A6 /* Sparkle.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		5C04D3301AB4984700A9B8A6 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				5C04D3311AB4985200A9B8A6 /* Sparkle.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		5C3763781A9BD7FE00C15C91 /* Dependencies */ = {
 			isa = PBXGroup;
 			children = (
@@ -279,6 +306,7 @@
 		5CE279331A95D91D00E8D409 /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				5C04D3301AB4984700A9B8A6 /* Frameworks */,
 				5C3763781A9BD7FE00C15C91 /* Dependencies */,
 				5CE279361A95D91D00E8D409 /* AppDelegate.h */,
 				5CE279371A95D91D00E8D409 /* AppDelegate.m */,
@@ -302,13 +330,13 @@
 				5CE2793D1A95D91D00E8D409 /* MainMenu.xib */,
 				5CE279341A95D91D00E8D409 /* Supporting Files */,
 			);
-			name = Source;
 			path = Source;
 			sourceTree = "<group>";
 		};
 		5CE279341A95D91D00E8D409 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				5C04D3351AB499FF00A9B8A6 /* dsa_pub.pem */,
 				5C7A7EB51A9E2248009F5DC2 /* Credits.rtf */,
 				5CE279351A95D91D00E8D409 /* Info.plist */,
 				5CE279391A95D91D00E8D409 /* main.m */,
@@ -326,6 +354,7 @@
 				5CE2792D1A95D91D00E8D409 /* Sources */,
 				5CE2792E1A95D91D00E8D409 /* Frameworks */,
 				5CE2792F1A95D91D00E8D409 /* Resources */,
+				5C04D3331AB4992600A9B8A6 /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -378,6 +407,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5C3763CA1A9BD7FE00C15C91 /* About.txt in Resources */,
+				5C04D3361AB499FF00A9B8A6 /* dsa_pub.pem in Resources */,
 				5CE2793C1A95D91D00E8D409 /* Images.xcassets in Resources */,
 				5C3763D21A9BD7FE00C15C91 /* README.txt in Resources */,
 				5CE2793F1A95D91D00E8D409 /* MainMenu.xib in Resources */,
@@ -527,6 +557,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon2;
 				COMBINE_HIDPI_IMAGES = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Source/Frameworks",
+				);
 				INFOPLIST_FILE = Source/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.8;
@@ -540,6 +574,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon2;
 				COMBINE_HIDPI_IMAGES = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Source/Frameworks",
+				);
 				INFOPLIST_FILE = Source/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.8;
