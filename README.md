@@ -21,9 +21,9 @@ Playback performance is determined by the speed of your network connection, not 
 
 # Credits #
 
-*Development, UI, Icons: Florian Bethke
-*[CocoaAsyncSocket](https://github.com/robbiehanson/CocoaAsyncSocket), [CocoaHTTPServer](https://github.com/robbiehanson/CocoaHTTPServer) and [CocoaLumberjack](https://github.com/CocoaLumberjack/CocoaLumberjack) by Robbie Hanson
-*[XMLDictionary](https://github.com/nicklockwood/XMLDictionary) by Nick Lockwood
+* Development, UI, Icons: Florian Bethke
+* [CocoaAsyncSocket](https://github.com/robbiehanson/CocoaAsyncSocket), [CocoaHTTPServer](https://github.com/robbiehanson/CocoaHTTPServer) and [CocoaLumberjack](https://github.com/CocoaLumberjack/CocoaLumberjack) by Robbie Hanson
+* [XMLDictionary](https://github.com/nicklockwood/XMLDictionary) by Nick Lockwood
 
 # License #
 ...
