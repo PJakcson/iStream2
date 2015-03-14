@@ -2,10 +2,6 @@
 
 iStream allows you to stream your media onto your big TV screen with no configuration at all! Just throw in some files and iStream will do the rest! iStream supports a vast number of media formats and playback devices: From modern SmartTVs via set-top boxes or network-enabled stereos through to software solutions (e.g. Kodi or Plex) running on an HTPC, everything is possible.
 
-*** IMPORTANT NOTES ***: Due to the nature of the underlying protocols, device vendors have a big area of freedom in implementing these streaming features. Therefor it cannot be guaranteed that iStream fully supports your device. Please download the free trail version LINK before buying to see if everything works!
-Supported file formats are determined by your playback device, not by iStream. Please consult your device's manual if you are uncertain.
-Playback performance is determined by the speed of your network connection, not by iStream. WiFi connections might be too slow for high definition content.
-
 ### Main Features ###
 
 * Super-fast discovery of all compatible media renderers on your network!
@@ -26,7 +22,18 @@ Playback performance is determined by the speed of your network connection, not 
 * [XMLDictionary](https://github.com/nicklockwood/XMLDictionary) by Nick Lockwood
 
 # License #
-...
+Copyright (c) 2015, Florian Bethke
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+
+1. Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+
+2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+
+3. Neither the name of the copyright holder nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 # FAQ #
 
