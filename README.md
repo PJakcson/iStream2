@@ -20,6 +20,7 @@ iStream allows you to stream your media onto your big TV screen with no configur
 * Development, UI, Icons: Florian Bethke
 * [CocoaAsyncSocket](https://github.com/robbiehanson/CocoaAsyncSocket), [CocoaHTTPServer](https://github.com/robbiehanson/CocoaHTTPServer) and [CocoaLumberjack](https://github.com/CocoaLumberjack/CocoaLumberjack) by Robbie Hanson
 * [XMLDictionary](https://github.com/nicklockwood/XMLDictionary) by Nick Lockwood
+* [Sparkle](http://sparkle-project.org)
 
 # License #
 Copyright (c) 2015, Florian Bethke
