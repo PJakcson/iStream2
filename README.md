@@ -14,6 +14,19 @@ Playback performance is determined by the speed of your network connection, not 
 * Supports fast forwarding and seeking of video and audio files on most devices
 * 100% pure Cocoa code for best performance and user experience
 
+# Requirements #
+
+* OS X 10.8+
+* UPnP/DLNA compliant media renderer (SmartTV, Set-Top Box, AV-Receiver, Bluray-Player, HTPC, ...)
+
+# Credits #
+
+* Development, UI, Icons: Florian Bethke
+* [CocoaAsyncSocket](https://github.com/robbiehanson/CocoaAsyncSocket), [CocoaHTTPServer](https://github.com/robbiehanson/CocoaHTTPServer) and [CocoaLumberjack](https://github.com/CocoaLumberjack/CocoaLumberjack) by Robbie Hanson
+* [XMLDictionary](https://github.com/nicklockwood/XMLDictionary) by Nick Lockwood
+
+# License #
+...
 
 # FAQ #
 
