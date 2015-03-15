@@ -85,6 +85,13 @@
     _isBusy = false;
     [_openItem setEnabled:false];
     
+    // Set log level
+    NSString *logLevel = [[NSUserDefaults standardUserDefaults] objectForKey:@"LogLevel"];
+    if (logLevel) {
+        ddLogLevel = (int)[logLevel intValue];
+        DDLogInfo(@"Changed log level to: %i", ddLogLevel);
+    }
+    
     // Send initial SSDP search request
     [ssdp ssdpMSEARCHRequest];
     
