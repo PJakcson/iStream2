@@ -2,6 +2,8 @@
 
 iStream allows you to stream your media onto your big TV screen with no configuration at all! Just throw in some files and iStream will do the rest! iStream supports a vast number of media formats and playback devices: From modern SmartTVs via set-top boxes or network-enabled stereos through to software solutions (e.g. Kodi or Plex) running on an HTPC, everything is possible.
 
+Use it to get a movie on your big screen, your music to your stereo or to show an image slideshow to your friends. Compatible devices will be detected automatically, you don't have to care about anything.
+
 ### Main Features ###
 
 * Super-fast discovery of all compatible media renderers on your network!
@@ -40,7 +42,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 ## Is my TV / set-top box / console / AV-receiver supported? #
 
-If it has networking functionalities and confirmes to the UPnP standard, it is likely to be supported. To be sure, just download the free trail version LINK and try it out!
+If it has networking functionalities and confirmes to the UPnP standard, it is likely to be supported. Just try it out, iStream is free!
 
 ## iStream doesn't discover any devices. What's wrong? ##
 This could have multiple reasons:
@@ -51,10 +53,10 @@ This could have multiple reasons:
 
 ## Filetype .xyz doesn't play on my device. ##
 
-iStream supports all filetypes which are natively supported by your playback device. There is no transcoding at the moment, so you would have to convert the file into a compatible format beforehand. However, if you are sure that your media renderer supports this filetype (e.g. because the file can be played from USB), please contact support.
+iStream supports all filetypes which are natively supported by your playback device. There is no transcoding at the moment, so you would have to convert the file into a compatible format beforehand. However, if you are sure that your media renderer supports this filetype (e.g. because the file can be played from USB), please report an issue in the issue tracker here on Bitbucket.
 
  ## An advertised feature (e.g. fast-forwarding, seeking, queued playback, image slideshows...) doesn't work. Why? ##
-Device vendors have a great amount of freedom in implementing the streaming protocols. Additionally, many devices have bugs in their implementations which make them behave incorrectly. This makes it quite difficult to fully support all of them at once. If you want to help improving iStream, please don't hesitate to contact support: If your problem can be found, your device will be fully supported in the next release.
+Device vendors have a great amount of freedom in implementing the streaming protocols. Additionally, many devices have bugs in their implementations which make them behave incorrectly. This makes it quite difficult to fully support all of them at once. If you want to help improving iStream, please don't hesitate to open up an issue: If your problem can be found, your device will be fully supported in the next release.
 
 ## My video playback is sluggish, what should I do? ##
 The performance of the data transfer is solely determined by the performance of your network connection, iStream has NO impact on it. WiFi connections might be too slow for high definition content, try optimizing it or switch over to a wired connection.
