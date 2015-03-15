@@ -60,6 +60,7 @@ This could have multiple reasons:
 iStream supports all filetypes which are natively supported by your playback device. There is no transcoding at the moment, so you would have to convert the file into a compatible format beforehand. However, if you are sure that your media renderer supports this filetype (e.g. because the file can be played from USB), please report an issue in the issue tracker here on Bitbucket.
 
  ## An advertised feature (e.g. fast-forwarding, seeking, queued playback, image slideshows...) doesn't work. Why? ##
+
 Device vendors have a great amount of freedom in implementing the streaming protocols. Additionally, many devices have bugs in their implementations which make them behave incorrectly. This makes it quite difficult to fully support all of them at once. If you want to help improving iStream, please don't hesitate to open up an issue: If your problem can be found, your device will be fully supported in the next release.
 
 ## My video playback is sluggish, what should I do? ##
