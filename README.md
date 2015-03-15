@@ -26,14 +26,8 @@ Use it to get a movie on your big screen, your music to your stereo or to show a
 
 # Donation #
 
-Do you like the project? If you wanna buy me a coffee, feel free to do so: 
+Do you like the project? If you wanna buy me a coffee, feel free to do so: [![donation](http://www.paypal.com/en_US/i/btn/btn_donate_SM.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id= 63CMERZ94YUFL)
 
-<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
-<input type="hidden" name="cmd" value="_s-xclick">
-<input type="hidden" name="hosted_button_id" value="63CMERZ94YUFL">
-<input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
-<img alt="" border="0" src="https://www.paypalobjects.com/de_DE/i/scr/pixel.gif" width="1" height="1">
-</form>
 # License #
 Copyright (c) 2015, Florian Bethke
 All rights reserved.
