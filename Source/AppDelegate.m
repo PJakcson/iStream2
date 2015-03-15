@@ -760,6 +760,12 @@
                       }];
 }
 
+- (IBAction)donate:(id)sender
+{
+    NSURL *donationURL = [NSURL URLWithString:@"https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=%2063CMERZ94YUFL"];
+    [[NSWorkspace sharedWorkspace] openURL:donationURL];
+}
+
 #pragma mark Table View (Queue)
 
 - (NSInteger)numberOfRowsInTableView:(NSTableView *)aTableView
