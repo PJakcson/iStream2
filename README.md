@@ -14,7 +14,7 @@ Use it to get a movie on your big screen, your music to your stereo or to show a
 
 # Requirements #
 
-* OS X 10.8+
+* OS X 10.7+
 * UPnP/DLNA compliant media renderer (SmartTV, Set-Top Box, AV-Receiver, Bluray-Player, HTPC, ...)
 
 # Credits #
